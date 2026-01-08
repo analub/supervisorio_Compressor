@@ -1,0 +1,150 @@
+#:kivy 2.1.0
+
+<MainWidget>:                   #classe principal
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgba: 0.8, 0.8, 0.8, 1 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    
+    FloatLayout: #AREA DE GRAFICOS
+        size_hint: 1,0.95
+        canvas: 
+            Color:
+                rgba: 0.8, 0.8, 0.8, 1 
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Image:
+            source: 'imagens/baseDesligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+            pos_hint: {'x': 0, 'y': 0}
+
+        FloatLayout:
+            size_hint: None, None
+            size: 150, 50   # Ajuste para o tamanho do quadradinho
+            pos_hint: {'x': 0.1, 'y': 0.3}  # Ajuste para a posição correta na tela
+            Label:
+                id: vel_motor
+                text: '--- RPM'
+                font_size: '18sp'
+                bold: False #True
+                color: 0, 0, 0, 1
+                size_hint: None, None
+                size: self.texture_size
+                pos_hint: {'x': -0.65, 'top': 0.4}
+                halign: 'center'
+                valign: 'top'
+            Label:
+                id: torque_motor
+                text: '--- N.m'
+                font_size: '18sp'
+                bold: False #True
+                color: 0, 0, 0, 1
+                size_hint: None, None
+                size: self.texture_size
+                pos_hint: {'x': 0.65, 'top': 0.4}
+                halign: 'center'
+                valign: 'top'
+            Label:
+                id: vazao_valvulas
+                text: '--- Nm³/min'
+                font_size: '18sp'
+                bold: False #True
+                color: 0, 0, 0, 1
+                size_hint: None, None
+                size: self.texture_size
+                pos_hint: {'x': 2, 'top': 9.8}
+                halign: 'center'
+                valign: 'top'
+            Label:
+                id: pressao_reservatorio
+                text: '--- Kgf/cm²'
+                font_size: '18sp'
+                bold: False #True
+                color: 0, 0, 0, 1
+                size_hint: None, None
+                size: self.texture_size
+                pos_hint: {'x': 6.6, 'top': 10.8}
+                halign: 'center'
+                valign: 'top'
+        # BoxLayout vertical para válvulas
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: 150, 200
+            pos_hint: {'right': 0.97, 'top': 0.49}  # canto superior direito
+            spacing: 85  # espaço fixo entre labels
+
+            Label:
+                id: XV_2
+                text: 'FECHADA'
+                font_size: '16sp'
+                color: 0,0,0,1
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: 'center'
+
+            Label:
+                id: XV_3
+                text: 'FECHADA'
+                font_size: '16sp'
+                color: 0,0,0,1
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: 'center'
+
+            Label:
+                id: XV_4
+                text: 'FECHADA'
+                font_size: '16sp'
+                color: 0,0,0,1
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: 'center'
+
+            Label:
+                id: XV_5
+                text: 'FECHADA'
+                font_size: '16sp'
+                color: 0,0,0,1
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: 'center'
+
+            Label:
+                id: XV_6
+                text: 'FECHADA'
+                font_size: '16sp'
+                color: 0,0,0,1
+                size_hint_y: None
+                height: self.texture_size[1]
+                halign: 'center'
+                
+        BoxLayout:                  #BOTOES INFERIORES 
+            orientation: 'horizontal'
+            size_hint: 1,0.1
+            spacing: 10
+            padding: 20, 10    # espaço DAS BORDAS (x, y)
+            RoundedButton:
+                text: "COMANDO"
+            RoundedButton:
+                text: "PID"
+            RoundedButton:
+                text: "TEMPERATURA"
+            RoundedButton:
+                text: "MEDIÇÕES"
+            RoundedButton:
+                text: "GRÁFICOS"
+            RoundedButton:
+                text: "BD"
+        
+        Widget:
+            size_hint_y: 0.01
+
+    
+        
