@@ -1,17 +1,20 @@
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.lang import Builder
+from mainwidget import MainWidget
+from kivy.lang.builder  import Builder
 
-Builder.load_file("telas.kv")
+Builder.load_file("widgets_auxiliares.kv")
 
-class TelaPrincipal(Screen):
-    pass
-
-class SupervisórioApp(App):
+class MainApp(App):
+    """
+        Classe principal do aplicativo
+    """
     def build(self):
-        sm = ScreenManager()
-        sm.add_widget(TelaPrincipal(name="principal"))
-        return sm
-
+        """
+        Método que gera o aplicativo com base no widget principal.
+        """
+        self._widget = MainWidget()
+        return self._widget
+    
 if __name__ == "__main__":
-    SupervisórioApp().run()
+    Builder.load_string(open("mainwidget.kv", encoding="utf-8").read(), rulesonly=True)
+    MainApp().run() 
