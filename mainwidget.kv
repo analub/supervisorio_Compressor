@@ -51,8 +51,8 @@
                 halign: 'center'
                 valign: 'top'
             Label:
-                id: vazao_valvulas
-                text: '--- Nm³/min'
+                id: ressao_reservatorio 
+                text: '--- Kgf/cm²'
                 font_size: '18sp'
                 bold: False #True
                 color: 0, 0, 0, 1
@@ -62,8 +62,8 @@
                 halign: 'center'
                 valign: 'top'
             Label:
-                id: pressao_reservatorio
-                text: '--- Kgf/cm²'
+                id: pvazao_valvulas
+                text: '--- Nm³/min'
                 font_size: '18sp'
                 bold: False #True
                 color: 0, 0, 0, 1
@@ -132,8 +132,12 @@
             padding: 20, 10    # espaço DAS BORDAS (x, y)
             RoundedButton:
                 text: "COMANDO"
+                on_release: 
+                    root.modbusPopup.open()  # Abre o popup de configuração Modbus
             RoundedButton:
                 text: "PID"
+                on_release: 
+                    root.scanPopup.open()  # Abre o popup de configuração ScanTime
             RoundedButton:
                 text: "TEMPERATURA"
             RoundedButton:
