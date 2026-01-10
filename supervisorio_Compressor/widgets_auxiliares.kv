@@ -1,19 +1,55 @@
 #:kivy 2.1.0
+#:import Window kivy.core.window.Window
 
 <RoundedButton@Button>:
     background_normal: ''
     background_color: 0, 0, 0, 0
-    font_size: '16sp'
     bold: True
     color: 0, 0, 0, 1
+
+    # Fonte responsiva (ISA-101 friendly)
+    #font_size: min(self.parent.width, self.parent.height) * 0.03 if self.parent else '18sp'
+    font_size: min(Window.width, Window.height) * 0.020
+
+    # Tamanho relativo (NÃO fixo)
+    size_hint: 0.09, 0.06
+
     on_press:
         self.opacity = 0.7
     on_release:
         self.opacity = 1
+
     canvas.before:
         Color:
             rgba: 0.85, 0.85, 0.85, 1
         RoundedRectangle:
             pos: self.pos
             size: self.size
-            radius: [25]
+            radius: [self.height * 0.45]
+
+<LabelValvula@Label>:
+    text: 'FECHADA'
+    color: 0, 0, 0, 1
+    bold: False
+
+    # Fonte responsiva em X e Y
+    font_size: min(Window.width, Window.height) * 0.020
+
+    size_hint: None, None
+    size: self.texture_size
+
+    halign: 'center'
+    valign: 'middle'
+
+<LabelMedidas@Label>:
+    color: 0, 0, 0, 1
+    bold: False
+
+    # Fonte responsiva em X e Y (sem loop)
+    font_size: min(Window.width, Window.height) * 0.020
+
+    size_hint: None, None
+    size: self.texture_size
+
+    halign: 'center'
+    valign: 'middle'
