@@ -7,7 +7,7 @@
     height: 250
 
     BoxLayout:
-        id: layout
+        id: layout # ID fundamental para o Python (popups.py) conseguir inserir a Label de erro aqui
         orientation: 'vertical'
         GridLayout:
             cols: 2
@@ -16,7 +16,7 @@
                 text: "IP"
                 font_size: 14
             TextInput:
-                id: txt_ip
+                id: txt_ip # ID usado pelo Python para ler o IP digitado
                 text: "127.0.0.1"
                 font_size: 14
                 halign: 'center'
@@ -25,7 +25,7 @@
                 text: "Porta"
                 font_size: 14
             TextInput:
-                id: txt_port
+                id: txt_port # ID usado pelo Python para ler a porta digitada
                 text: "502"
                 font_size: 14
                 halign: 'center'
@@ -36,12 +36,17 @@
                 text: "Conectar"
                 size_hint_y: None
                 height: 40
+                on_release:
+                    root.clearInfo() # Limpa avisos de erros de tentativas anteriores
+                    # Chama a função de conexão no widget principal passando os valores dos inputs
+                    app.root.startDataRead(txt_ip.text, int(txt_porta.text))
             Button:
                 text: "Fechar"
                 size_hint_y: None
                 height: 40
                 on_release: 
-                    root.dismiss() #fecha a janela e volta pra raiz
+                    root.dismiss() # Fecha a janela do popup
+                    root.clearInfo() # Limpa a mensagem de erro ao sair
         
 <ScanPopup>:
     title: "Configuração ScanTime"
