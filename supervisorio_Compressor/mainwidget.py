@@ -5,6 +5,7 @@ from kivy.core.window import Window # Permite controlar propriedades da janela, 
 from threading import Thread # Permite rodar funções em segundo plano sem travar a interface
 from time import sleep # Utilizado para criar intervalos de tempo entre as leituras
 from datetime import datetime
+import struct
 
 class MainWidget(BoxLayout):
     """
@@ -32,11 +33,39 @@ class MainWidget(BoxLayout):
         # Estrutura de dados para armazenar as medições em tempo real
         self._meas = {'timestamp': None, 'values': {}}
 
+        # Mapeamento de tipos e divisores
+        self._tag_setup = {
+            # Tags que são Floating Point (FP) - 32 bits / 2 registradores
+            'vel_motor': {'type': 'fp', 'div': 1},
+            'torque_motor': {'type': 'fp', 'div': 1},
+            'pressao_reservatorio': {'type': 'fp', 'div': 1},
+            'vazao_valvulas': {'type': 'fp', 'div': 1},
+            'temp_carcaca': {'type': 'fp', 'div': 10}, # FP que ainda precisa dividir por 10
+
+            # Tags que são Inteiros (4X) - 16 bits / 1 registrador + Divisor
+            'freq_rede': {'type': 'int', 'div': 100},
+            'ddp_rs': {'type': 'int', 'div': 10},
+            'ddp_st': {'type': 'int', 'div': 10},
+            'ddp_tr': {'type': 'int', 'div': 10},
+            'corr_r': {'type': 'int', 'div': 10},
+            'corr_s': {'type': 'int', 'div': 10},
+            'corr_t': {'type': 'int', 'div': 10},
+            'corr_neutro': {'type': 'int', 'div': 10},
+            'corr_media': {'type': 'int', 'div': 10},
+            'fp_total': {'type': 'int', 'div': 1000},
+            'dem_anterior': {'type': 'int', 'div': 10},
+            'dem_atual': {'type': 'int', 'div': 10},
+            'dem_media': {'type': 'int', 'div': 10},
+            'dem_prevista': {'type': 'int', 'div': 10},
+            
+            # As demais potências são Divisor 1 (valor direto)
+        }
+
         # Mapeamento de unidades de medida da planta de compressão
         units = {
             'vel_motor': ' RPM', 
-            'torque': ' Nm', 
-            'pressao_vazao': ' bar', 
+            'torque_motor': ' Nm', 
+            'pressao_reservatorio': ' bar', 
             'vazao_valvulas': ' m³/h',
             'temp_carcaca': ' °C', 
             'freq_rede': ' Hz', 
@@ -63,7 +92,7 @@ class MainWidget(BoxLayout):
 
         # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico e Unidade)
         for key, value in kwargs.get('modbus_addrs').items():
-            if key in ['vel_motor', 'torque', 'pressao_vazao']:
+            if key in ['vel_motor', 'torque_motor', 'pressao_reservatorio']:
                 plot_color = (1, 0, 0, 1) # Vermelho (Principais)
             elif 'ddp' in key:
                 plot_color = (0, 0, 1, 1) # Azul (Tensões)
@@ -71,7 +100,22 @@ class MainWidget(BoxLayout):
                 plot_color = (1, 0.5, 0, 1) # Laranja (Correntes)
             else:
                 plot_color = (0, 1, 0, 1) # Verde (Outros)
-            self._tags[key] = {'addr': value, 'color': plot_color, 'unit': units.get(key, '')}
+            # Adicionamos as informações de tratamento na tag
+            setup = self._tag_setup.get(key, {'type': 'int', 'div': 1}) # Padrão é inteiro div 1
+            self._tags[key] = {
+                'addr': value, 
+                'color': plot_color, 
+                'unit': units.get(key, ''),
+                'type': setup['type'],
+                'div': setup['div']
+            }
+
+    def registers_to_float(self, registers):
+        """
+        Converte 2 registradores de 16 bits em 1 float de 32 bits 
+        """
+        packed = struct.pack('>HH', *registers)
+        return struct.unpack('>f', packed)[0]
 
     def startDataRead(self, ip, port):
         """
@@ -118,23 +162,36 @@ class MainWidget(BoxLayout):
         Realiza o polling (consulta) dos registradores Modbus.
         """
         self._meas['timestamp'] = datetime.now()
-        for key, value in self._tags.items():
-            # Lê 1 registrador (holding register) por vez no endereço da tag
-            result = self._modbusClient.read_holding_registers(value['addr'], 1)
-            if result is not None:
-                self._meas['values'][key] = result[0]
+        for key, tag in self._tags.items():
+            try:
+                if tag['type'] == 'fp':
+                    # Lê 2 registradores para ponto flutuante
+                    result = self._modbusClient.read_holding_registers(tag['addr'], 2)
+                    if result:
+                        valor_final = self.registers_to_float(result) / tag['div']
+                        self._meas['values'][key] = valor_final
+                else:
+                    # Lê 1 registrador para inteiros escalonados
+                    result = self._modbusClient.read_holding_registers(tag['addr'], 1)
+                    if result:
+                        valor_final = result[0] / tag['div']
+                        self._meas['values'][key] = valor_final
+            except Exception as e:
+                print(f"Erro na leitura da tag {key}: {e.args}")
 
     def updateGUI(self):
         """
         Método para atualização da interface gráfica a partir dos dados lidos.
         """
-        # atualização dos labels
         for key, tag_info in self._tags.items():
             if key in self._meas['values']:
                 valor = self._meas['values'][key]
                 unidade = tag_info['unit']
-                # Atualiza o ID correspondente na interface Kivy
-                self.ids[key].text = f"{valor}{unidade}"
+                # Formata para 2 casas decimais se for float ou tiver divisor
+                if tag_info['div'] > 1 or tag_info['type'] == 'fp':
+                    self.ids[key].text = f"{valor:.2f}{unidade}"
+                else:
+                    self.ids[key].text = f"{int(valor)}{unidade}"
 
     def stopRefresh(self):
         """ 
