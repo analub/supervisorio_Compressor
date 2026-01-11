@@ -1,33 +1,77 @@
 from kivy.uix.boxlayout import BoxLayout
 from popups import ModbusPopup, ScanPopup
-from pyModbusTCP.client import ModbusClient # # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
+from pyModbusTCP.client import ModbusClient # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
 from kivy.core.window import Window # Permite controlar propriedades da janela, como o cursor do mouse
 from threading import Thread # Permite rodar funções em segundo plano sem travar a interface
 from time import sleep # Utilizado para criar intervalos de tempo entre as leituras
+from datetime import datetime
 
 class MainWidget(BoxLayout):
     """
-        Widget principal do aplicativo
+    Widget principal do aplicativo
     """
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
     _updateWidgets = True # Flag (bandeira) para controlar quando o loop de leitura deve rodar ou parar
+    _tags = {}
     def __init__(self, **kwargs):
         """
         Construtor do widget principal.
         """
         super().__init__()
+        # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
-        self._scanPopup = ScanPopup(scantime=self._scan_time)
-
-        # Esse bloco é configuração do protocolo MODBUS
-
         self._serverIP = kwargs.get('server_ip')
         self._serverPort = kwargs.get('server_port')
+
+        # Instancia os componentes de interface e comunicação
+        self._scanPopup = ScanPopup(scantime=self._scan_time)
         self._modbusPopup = ModbusPopup(self._serverIP, self._serverPort)
         self._modbusClient = ModbusClient(host=self._serverIP, port=self._serverPort)
+        
+        # Estrutura de dados para armazenar as medições em tempo real
+        self._meas = {'timestamp': None, 'values': {}}
 
-    # Esse bloco é coleta de dados
+        # Mapeamento de unidades de medida da planta de compressão
+        units = {
+            'vel_motor': ' RPM', 
+            'torque': ' Nm', 
+            'pressao_vazao': ' bar', 
+            'vazao_valvulas': ' m³/h',
+            'temp_carcaca': ' °C', 
+            'freq_rede': ' Hz', 
+            'ddp_rs': ' V', 
+            'ddp_st': ' V', 
+            'ddp_tr': ' V',
+            'corr_r': ' A', 
+            'corr_s': ' A', 
+            'corr_t': ' A', 
+            'corr_neutro': ' A', 
+            'corr_media': ' A',
+            'pot_ativa_total': ' kW', 
+            'pot_reativa_total': ' kVAr', 
+            'pot_aparente_total': ' kVA',
+            'dem_anterior': ' kW', 
+            'dem_atual': ' kW', 
+            'dem_media': ' kW', 
+            'dem_prevista': ' kW',
+            'pot_ativa_r': ' kW', 
+            'pot_ativa_s': ' kW', 
+            'pot_ativa_t': ' kW', 
+            'fp_total': ''
+        }
+
+        # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico e Unidade)
+        for key, value in kwargs.get('modbus_addrs').items():
+            if key in ['vel_motor', 'torque', 'pressao_vazao']:
+                plot_color = (1, 0, 0, 1) # Vermelho (Principais)
+            elif 'ddp' in key:
+                plot_color = (0, 0, 1, 1) # Azul (Tensões)
+            elif 'corr' in key:
+                plot_color = (1, 0.5, 0, 1) # Laranja (Correntes)
+            else:
+                plot_color = (0, 1, 0, 1) # Verde (Outros)
+            self._tags[key] = {'addr': value, 'color': plot_color, 'unit': units.get(key, '')}
 
     def startDataRead(self, ip, port):
         """
@@ -59,16 +103,42 @@ class MainWidget(BoxLayout):
         Loop de execução em segundo plano para leitura de dados e atualização da tela.
         """
         try:
-            while self._updateWdigets:
-                # Aqui entrarão as rotinas de:
-                # 1. Ler os dados via protocolo Modbus
-                # 2. Atualizar os labels e gráficos da interface
-                # 3. Inserir os dados no Banco de Dados para histórico
-
+            while self._updateWidgets:
+                self.readData()
+                self.updateGUI()
+                # Aqui entrará a rotina de inserir os dados no Banco de Dados para histórico
                 # Aguarda o tempo de varredura definido (convertido para segundos)
                 sleep(self._scan_time/1000)
         except Exception as e:
             self._modbusClient.close()
             print("Erro: ", e.args)
 
+    def readData(self):
+        """
+        Realiza o polling (consulta) dos registradores Modbus.
+        """
+        self._meas['timestamp'] = datetime.now()
+        for key, value in self._tags.items():
+            # Lê 1 registrador (holding register) por vez no endereço da tag
+            result = self._modbusClient.read_holding_registers(value['addr'], 1)
+            if result is not None:
+                self._meas['values'][key] = result[0]
+
+    def updateGUI(self):
+        """
+        Método para atualização da interface gráfica a partir dos dados lidos.
+        """
+        # atualização dos labels
+        for key, tag_info in self._tags.items():
+            if key in self._meas['values']:
+                valor = self._meas['values'][key]
+                unidade = tag_info['unit']
+                # Atualiza o ID correspondente na interface Kivy
+                self.ids[key].text = f"{valor}{unidade}"
+
+    def stopRefresh(self):
+        """ 
+        Para o loop da Thread de forma segura ao fechar o app. 
+        """
+        self._updateWidgets = False
 
