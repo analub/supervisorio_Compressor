@@ -29,6 +29,9 @@ class ServidorMODBUS():
         self._server.start()
         print("Servidor em execução...")
 
+        # Inicializamos as válvulas como 0 (todas abertas) apenas uma vez.
+        self._server.data_bank.set_holding_registers(712, [0])
+
         while True:
             # --- 1. DADOS PRINCIPAIS (FLOAT - 2 REGISTRADORES) ---
             # Velocidade motor (884), Torque (1420), Pressão (714), Vazão (716)
