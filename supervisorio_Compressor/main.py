@@ -57,7 +57,14 @@ class MainApp(App):
             'pot_ativa_t': 854,       # Potência ativa fase T
 
             # Fator de Potência
-            'fp_total': 871           # Fator de potência total
+            'fp_total': 871,          # Fator de potência total
+
+            # --- VÁLVULAS (Todas no endereço 712) ---
+            'XV_2': 712,
+            'XV_3': 712,
+            'XV_4': 712,
+            'XV_5': 712,
+            'XV_6': 712
         })
         return self._widget
     
