@@ -20,8 +20,8 @@ class MainApp(App):
         self._widget = MainWidget(scan_time=1000, server_ip='127.0.0.1', server_port=502, modbus_addrs = {
             # --- DADOS PRINCIPAIS ---
             'vel_motor': 884,         # Velocidade do motor
-            'torque': 1420,           # Torque
-            'pressao_vazao': 714,     # Pressão (vazão)
+            'torque_motor': 1420,           # Torque
+            'pressao_reservatorio': 714,     # Pressão (vazão)
             'vazao_valvulas': 716,    # Vazão no ramo das válvulas 2 a 6
 
             # --- DADOS SECUNDÁRIOS ---
