@@ -1,4 +1,5 @@
 from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 
 # Aqui serão colocados os popups do supervisório
 

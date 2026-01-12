@@ -1,47 +1,90 @@
 #:kivy 2.1.0
 
 <ModBusPopup>:
-    title: "Configuração ModBus"
+    title: "CONFIGURAÇÕES MODBUS"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint_x: 0.4
     size_hint_y: None
-    size_hint_x: 0.3
-    height: 250
+    height: 300
 
     BoxLayout:
-        id: layout
         orientation: 'vertical'
+        padding: 15
+        spacing: 10
+
+        canvas.before:
+            Color:
+                rgba: 0.9, 0.9, 0.9, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # ================= CAMPOS =================
         GridLayout:
             cols: 2
             rows: 2
+            size_hint_y: None
+            height: 110
+            spacing: 10
+
             Label:
                 text: "IP"
-                font_size: 14
+                bold: True
+                color: 0, 0, 0, 1
+                font_size: 18
+
             TextInput:
                 id: txt_ip
                 text: "127.0.0.1"
-                font_size: 14
+                font_size: 18
+                color: 0, 0, 0, 1
                 halign: 'center'
                 valign: 'middle'
+                background_normal: ''
+                background_active: ''
+                background_color: 0.906, 0.906, 0.906, 1
+
             Label:
                 text: "Porta"
-                font_size: 14
+                bold: True
+                color: 0, 0, 0, 1
+                font_size: 18
+
             TextInput:
                 id: txt_port
                 text: "502"
-                font_size: 14
+                font_size: 18
+                color: 0, 0, 0, 1
                 halign: 'center'
                 valign: 'middle'
+                background_normal: ''
+                background_active: ''
+                background_color: 0.906, 0.906, 0.906, 1
+
+        # ================= BOTÕES =================
         BoxLayout:
             orientation: 'horizontal'
-            Button:
+            size_hint_y: None
+            height: 60
+            spacing: 20
+
+            Widget:
+
+            RoundedButton:
                 text: "Conectar"
-                size_hint_y: None
-                height: 40
-            Button:
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                # on_release: root.conectar()
+
+            RoundedButton:
                 text: "Fechar"
-                size_hint_y: None
-                height: 40
-                on_release: 
-                    root.dismiss() #fecha a janela e volta pra raiz
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                on_release: root.dismiss()
+
+            Widget:
+
         
 <ScanPopup>:
     title: "Configuração ScanTime"
@@ -96,18 +139,16 @@
                 color: 0, 0, 0, 1
                 bold: False
                 font_size: 18
-            RoundedButton:
-                text: "TSYS DIRETA"
-                #VER A POSICAO DESSE BOTAO
-                #on_press: root.selecionar_partida('TSYS DIRETA')
-            RoundedButton:
-                text: "ATV31 INVERSOR"
-            RoundedButton:
-                text: "ATS48 SOFT-START"
-            RoundedButton:
-                text: "FECHAR"
-                on_release: 
-                    root.dismiss() #fecha a janela e volta pra raiz
+            BoxLayout:
+                orientation: 'vertical'
+                RoundedButton:
+                    text: "TSYS DIRETA"
+                    #VER A POSICAO DESSE BOTAO
+                    #on_press: root.selecionar_partida('TSYS DIRETA')
+                RoundedButton:
+                    text: "ATV31 INVERSOR"
+                RoundedButton:
+                    text: "ATS48 SOFT-START"
         BoxLayout:
             id: layoutPartida
             orientation: 'vertical'
@@ -147,18 +188,327 @@
                 color: 1, 1, 1, 1
                 bold: False
                 font_size: 18
+        RoundedButton:
+            text: "FECHAR"
+            on_release: 
+                root.dismiss() #fecha a janela e volta pra raiz
 
 <TemperaturaPopup>:
     title: "Exibir Temperaturas"
     size_hint_y: None
-    size_hint_x: 0.3
-    height: 150
+    size_hint_x: 0.5
+    height: 300
+    BoxLayout:
+        id: layout
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba:0.9, 0.9, 0.9, 1 #cinza claro
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        GridLayout:
+            cols: 2
+            rows: 4
+            Label:
+                text: "Enrolamento R Motor"
+                font_size: 16
+            Label:
+                id: temp_R
+                text: "-.- °C"
+                font_size: 16
+            Label:
+                text: "Enrolamento S Motor"
+                font_size: 16
+            Label:
+                id: temp_S
+                text: "-.- °C"
+                font_size: 16
+            Label:
+                text: "Enrolamento T Motor"
+                font_size: 16
+            Label:
+                id: temp_T
+                text: "-.- °C"
+                font_size: 16
+            Label:
+                text: "Carcaça"
+                font_size: 16
+            Label:
+                id: temp_C
+                text: "-.- °C"
+                font_size: 16
+        FloatLayout:
+            size_hint: 1,0.2
+            canvas: 
+                Color:
+                    rgba: 0.8, 0.8, 0.8, 1 
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            RoundedButton:
+                text: "FECHAR"
+                on_release: 
+                    root.dismiss() #fecha a janela e volta pra raiz  
 
 <MedidasPopup>:
-    title: "Exibir Medidas"
-    size_hint_y: None
-    size_hint_x: 0.3
-    height: 150
+    title: "MEDIDAS ELÉTRICAS"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: 0.9, None
+    height: 400
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        canvas.before:
+            Color:
+                rgba: 0.9, 0.9, 0.9, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # ================= GRID PRINCIPAL ================= #
+        GridLayout:
+            cols: 5
+            spacing: 10
+
+            # COLUNA 1: TENSÃO =======================================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Tensão"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    markup: True
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label: 
+                        text: "R–S"
+                        color: 0, 0, 0, 1
+                    LabelTHD: 
+                        id: thd_tensao_rn; 
+
+                    Label: 
+                        text: "S-T"
+                        color: 0, 0, 0, 1
+                    LabelTHD: 
+                        id: thd_tensao_sn; 
+
+                    Label: 
+                        text: "T–R"
+                        color: 0, 0, 0, 1
+                    LabelTHD: 
+                        id: thd_tensao_tn; 
+
+            # COLUNA 3: CORRENTE ======================================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "[b]Corrente[/b]"
+                    color: 0, 0, 0, 1
+                    markup: True
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label: 
+                        text: "Fase R"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente: 
+                        id: corrente_r; 
+
+                    Label: 
+                        text: "Fase S"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente: 
+                        id: corrente_s; 
+
+                    Label: 
+                        text: "Fase T"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente: 
+                        id: corrente_t; 
+
+                    Label: 
+                        text: "Neutro"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente: 
+                        id: corrente_n; 
+
+                    Label: 
+                        text: "Média"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente: 
+                        id: corrente_media; 
+
+            # COLUNA 3: DEMANDA ================================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Demanda"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    markup: True
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label: 
+                        text: "Anterior"
+                        color: 0, 0, 0, 1
+
+                    LabelValorDemanda: 
+                        id: thd_corrente_r; 
+
+                    Label: 
+                        text: "Atual"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: thd_corrente_s; 
+
+                    Label: 
+                        text: "Media"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: thd_corrente_t; 
+
+                    Label: 
+                        text: "Prevista"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: thd_corrente_n; 
+
+            # ============================================================
+            # COLUNA 4 – POTÊNCIA ATIVA
+            # ============================================================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "[b]Potência Ativa[/b]"
+                    color: 0, 0, 0, 1
+                    markup: True
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label: 
+                        text: "Fase R"
+                        color: 0, 0, 0, 1
+                    LabelValorPotAtiva: 
+                        id: ativa_r; 
+
+                    Label: 
+                        text: "Fase S"
+                        color: 0, 0, 0, 1
+                    LabelValorPotAtiva: 
+                        id: ativa_s; 
+
+                    Label: 
+                        text: "Fase T"
+                        color: 0, 0, 0, 1
+                    LabelValorPotAtiva: 
+                        id: ativa_t; 
+
+                    Label: 
+                        text: "Total"
+                        color: 0, 0, 0, 1
+                    LabelValorPotAtiva: 
+                        id: ativa_total; 
+
+            # ============================================================
+            # COLUNA 5 – POTÊNCIA REATIVA
+            # ============================================================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "[b]Potência Reativa[/b]"
+                    color: 0, 0, 0, 1
+                    markup: True
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label: 
+                        text: "Fase R"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: reativa_r; 
+
+                    Label: 
+                        text: "Fase S"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: reativa_s; 
+
+                    Label: 
+                        text: "Fase T"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: reativa_t; 
+
+                    Label: 
+                        text: "Total"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda: 
+                        id: reativa_total; 
+
+        # ================= BOTÃO FECHARC =================
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
+
 
 <GraficoPopup>:
     title: "Janela de Gráficos"   #tem que ser do tamanho da tela
