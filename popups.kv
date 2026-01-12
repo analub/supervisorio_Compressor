@@ -12,10 +12,9 @@
         orientation: 'vertical'
         padding: 15
         spacing: 10
-
         canvas.before:
             Color:
-                rgba: 0.9, 0.9, 0.9, 1
+                rgba: 0.788, 0.780, 0.780, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -43,7 +42,7 @@
                 valign: 'middle'
                 background_normal: ''
                 background_active: ''
-                background_color: 0.906, 0.906, 0.906, 1
+                background_color: 0.788, 0.780, 0.780, 1
 
             Label:
                 text: "Porta"
@@ -60,7 +59,7 @@
                 valign: 'middle'
                 background_normal: ''
                 background_active: ''
-                background_color: 0.906, 0.906, 0.906, 1
+                background_color: 0.788, 0.780, 0.780, 1
 
         # ================= BOTÕES =================
         BoxLayout:
@@ -255,8 +254,9 @@
     title: "MEDIDAS ELÉTRICAS"
     bold: True
     background_color: 0, 0, 0, 0
-    size_hint: 0.9, None
-    height: 400
+    size_hint: None, None
+    width: 650
+    height: 550
 
     BoxLayout:
         orientation: 'vertical'
@@ -265,17 +265,18 @@
 
         canvas.before:
             Color:
-                rgba: 0.9, 0.9, 0.9, 1
+                rgba: 0.788, 0.780, 0.780, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
 
-        # ================= GRID PRINCIPAL ================= #
+        # ================= GRID PRINCIPAL =================
         GridLayout:
-            cols: 4
-            spacing: 5
+            cols: 2
+            rows: 2
+            spacing: 3
 
-            # COLUNA 1: TENSÃO =======================================
+            # ================= TENSÃO =================
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -284,83 +285,94 @@
                     text: "Tensão"
                     bold: True
                     color: 0, 0, 0, 1
-                    markup: True
                     font_size: 18
                     size_hint_y: None
                     height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
 
                 GridLayout:
                     cols: 2
                     row_default_height: 30
                     row_force_default: True
 
-                    Label: 
+                    Label:
                         text: "R–S"
                         color: 0, 0, 0, 1
-                    LabelTHD: 
-                        id: thd_tensao_rn; 
+                    LabelTHD:
+                        id: thd_tensao_rn
 
-                    Label: 
-                        text: "S-T"
+                    Label:
+                        text: "S–T"
                         color: 0, 0, 0, 1
-                    LabelTHD: 
-                        id: thd_tensao_sn; 
+                    LabelTHD:
+                        id: thd_tensao_sn
 
-                    Label: 
+                    Label:
                         text: "T–R"
                         color: 0, 0, 0, 1
-                    LabelTHD: 
-                        id: thd_tensao_tn; 
+                    LabelTHD:
+                        id: thd_tensao_tn
 
-            # COLUNA 3: CORRENTE ======================================
+            # ================= CORRENTE =================
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
 
                 Label:
-                    text: "[b]Corrente[/b]"
+                    text: "Corrente"
+                    bold: True
                     color: 0, 0, 0, 1
-                    markup: True
                     font_size: 18
                     size_hint_y: None
                     height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
 
                 GridLayout:
                     cols: 2
                     row_default_height: 30
                     row_force_default: True
 
-                    Label: 
+                    Label:
                         text: "Fase R"
                         color: 0, 0, 0, 1
-                    LabelValorCorrente: 
-                        id: corrente_r; 
+                    LabelValorCorrente:
+                        id: corrente_r
 
-                    Label: 
+                    Label:
                         text: "Fase S"
                         color: 0, 0, 0, 1
-                    LabelValorCorrente: 
-                        id: corrente_s; 
+                    LabelValorCorrente:
+                        id: corrente_s
 
-                    Label: 
+                    Label:
                         text: "Fase T"
                         color: 0, 0, 0, 1
-                    LabelValorCorrente: 
-                        id: corrente_t; 
+                    LabelValorCorrente:
+                        id: corrente_t
 
-                    Label: 
+                    Label:
                         text: "Neutro"
                         color: 0, 0, 0, 1
-                    LabelValorCorrente: 
-                        id: corrente_n; 
+                    LabelValorCorrente:
+                        id: corrente_n
 
-                    Label: 
+                    Label:
                         text: "Média"
                         color: 0, 0, 0, 1
-                    LabelValorCorrente: 
-                        id: corrente_media; 
+                    LabelValorCorrente:
+                        id: corrente_media
 
-            # COLUNA 3: DEMANDA ================================
+            # ================= DEMANDA =================
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -369,44 +381,46 @@
                     text: "Demanda"
                     bold: True
                     color: 0, 0, 0, 1
-                    markup: True
                     font_size: 18
                     size_hint_y: None
                     height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
 
                 GridLayout:
                     cols: 2
                     row_default_height: 30
                     row_force_default: True
 
-                    Label: 
+                    Label:
                         text: "Anterior"
                         color: 0, 0, 0, 1
+                    LabelValorDemanda:
+                        id: demanda_anterior
 
-                    LabelValorDemanda: 
-                        id: thd_corrente_r; 
-
-                    Label: 
+                    Label:
                         text: "Atual"
                         color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: thd_corrente_s; 
+                    LabelValorDemanda:
+                        id: demanda_atual
 
-                    Label: 
-                        text: "Media"
+                    Label:
+                        text: "Média"
                         color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: thd_corrente_t; 
+                    LabelValorDemanda:
+                        id: demanda_media
 
-                    Label: 
+                    Label:
                         text: "Prevista"
                         color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: thd_corrente_n; 
+                    LabelValorDemanda:
+                        id: demanda_prevista
 
-            # ============================================================
-            # COLUNA 4 – POTÊNCIA (ATIVA / REATIVA / APARENTE / FP)
-            # ============================================================
+            # ================= POTÊNCIA =================
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -418,12 +432,18 @@
                     font_size: 18
                     size_hint_y: None
                     height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
 
                 GridLayout:
                     cols: 2
                     spacing: 10
 
-                    # ================= SUBCOLUNA 1 – ATIVA =================
+                    # -------- ATIVA --------
                     BoxLayout:
                         orientation: 'vertical'
                         spacing: 5
@@ -432,9 +452,14 @@
                             text: "Ativa"
                             bold: True
                             color: 0, 0, 0, 1
-                            font_size: 16
                             size_hint_y: None
                             height: 25
+                            canvas.after:
+                                Color:
+                                    rgba: 0, 0, 0, 0.6
+                                Line:
+                                    points: self.x, self.y, self.right, self.y
+                                    width: 1.2
 
                         GridLayout:
                             cols: 2
@@ -459,7 +484,7 @@
                             LabelValorPotAtiva:
                                 id: ativa_t
 
-                    # ================= SUBCOLUNA 2 – OUTRAS =================
+                    # -------- OUTRAS --------
                     BoxLayout:
                         orientation: 'vertical'
                         spacing: 5
@@ -468,53 +493,30 @@
                             text: "Reativa"
                             bold: True
                             color: 0, 0, 0, 1
-                            font_size: 16
-                            size_hint_y: None
-                            height: 25
-
                         Label:
                             id: reativa_total
                             text: "-.- var"
                             color: 0, 0, 0, 1
-                            bold: False
-                            halign: 'center'
-                            valign: 'middle'
-
 
                         Label:
                             text: "Aparente"
                             bold: True
                             color: 0, 0, 0, 1
-                            font_size: 16
-                            size_hint_y: None
-                            height: 25
-
                         Label:
                             id: aparente_total
                             text: "-.- VA"
                             color: 0, 0, 0, 1
-                            bold: False
-                            halign: 'center'
-                            valign: 'middle'
 
                         Label:
-                            text: "Fator de Potência"
+                            text: "FP"
                             bold: True
                             color: 0, 0, 0, 1
-                            font_size: 16
-                            size_hint_y: None
-                            height: 25
-
                         Label:
                             id: fator_potencia
                             text: "-.-"
                             color: 0, 0, 0, 1
-                            bold: False
-                            halign: 'center'
-                            valign: 'middle'
 
-
-        # ================= BOTÃO FECHARC =================
+        # ================= BOTÃO FECHAR (MANTIDO) =================
         BoxLayout:
             size_hint_y: None
             height: 60
@@ -529,7 +531,6 @@
                 on_release: root.dismiss()
 
             Widget:
-
 
 
 <GraficoPopup>:
