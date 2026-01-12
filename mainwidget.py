@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup, ScanPopup, ComandoPopup
+from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, GraficoPopup, BancoDadosPopup
 
 class MainWidget(BoxLayout):
     """
@@ -14,4 +14,8 @@ class MainWidget(BoxLayout):
         self._modbusPopup = ModbusPopup()
         self._scanPopup = ScanPopup(scantime=self._scan_time)
         self._comandoPopup = ComandoPopup()
+        self._medidasPopup = MedidasPopup()
+        self._temperaturaPopup = TemperaturaPopup()
+        self._graficoPopup = GraficoPopup()
+        self._bancoDadosPopup = BancoDadosPopup()        
 

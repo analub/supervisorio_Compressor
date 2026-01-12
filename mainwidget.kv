@@ -58,23 +58,23 @@
         ## LABELS DE VALVULAS ##
         LabelValvula:
             id: XV_2
-            pos_hint: {'center_x': 0.934, 'center_y': 0.74}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.685}
 
         LabelValvula:
             id: XV_3
-            pos_hint: {'center_x': 0.934, 'center_y': 0.635}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.582}
 
         LabelValvula:
             id: XV_4
-            pos_hint: {'center_x': 0.934, 'center_y': 0.525}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.47}
 
         LabelValvula:
             id: XV_5
-            pos_hint: {'center_x': 0.934, 'center_y': 0.415}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.36}
 
         LabelValvula:
             id: XV_6
-            pos_hint: {'center_x': 0.934, 'center_y': 0.305}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.254}
 
         # BOTÕES VALVULAS
         RoundedButton:
@@ -97,14 +97,17 @@
         RoundedButton:
             text: "MEDIÇÕES"
             pos_hint: {'center_x': 0.35, 'y': 0.02}
+            on_release: root._medidasPopup.open()   #abre o popup de medidas
 
         RoundedButton:
             text: "GRÁFICOS"
             pos_hint: {'center_x': 0.50, 'y': 0.02}
+            on_release: root._graficoPopup.open()   #abre o popup de gráficos
 
         RoundedButton:
             text: "BD"
             pos_hint: {'center_x': 0.65, 'y': 0.02}
+            on_release: root._bancoDadosPopup.open()   #abre o popup de banco de dados
         
         RoundedButton:
             text: "LIGA"
@@ -118,6 +121,7 @@
         RoundedButton:
             text: "TEMPERATURA"
             pos_hint: {'center_x': 0.44, 'y': 0.24}
+            on_release: root._temperaturaPopup.open()   #abre o popup de temperatura
 
         Widget:
             size_hint_y: 0.01
