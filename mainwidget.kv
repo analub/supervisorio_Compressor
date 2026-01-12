@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<MainWidget>:                   #classe principal
+<MainWidget>:                   
     orientation: 'vertical'
     canvas:
         Color:
@@ -23,6 +23,16 @@
             keep_ratio: False
             size_hint: 1, 1
             pos_hint: {'x': 0, 'y': 0}
+
+        # BOTÃO CONFIGURAÇÕES (TRANSPARENTE)
+        Button:
+            id: bt_config
+            size_hint: 0.05, 0.08
+            pos_hint: {'right': 0.93, 'top': 0.99}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._modbusPopup.open()  #abre o popup de configuração modbus
 
         ## LABELS DE DADOS ##
         LabelMedidas:
@@ -82,10 +92,8 @@
         RoundedButton:
             text: "ABRE"
             pos_hint: {'center_x': 0.805, 'y': 0.27}     
-        # =======================
+        
         # BOTÕES INFERIORES -> OBS: conferir tamanho da fonte nos botões
-        # =======================
-
         RoundedButton:
             text: "MEDIÇÕES"
             pos_hint: {'center_x': 0.35, 'y': 0.02}
@@ -105,6 +113,7 @@
         RoundedButton:
             text: "COMANDO"
             pos_hint: {'center_x': 0.2, 'y': 0.24}
+            on_release: root._comandoPopup.open()   #abre o popup de comando de partida
 
         RoundedButton:
             text: "TEMPERATURA"
