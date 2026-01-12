@@ -41,6 +41,36 @@
     halign: 'center'
     valign: 'middle'
 
+
+<LabelTHD@Label>:  
+    text: "-.- %"
+    color: 0, 0, 0, 1
+    bold: False
+    halign: 'center'
+    valign: 'middle'
+
+<LabelValorCorrente@Label>:  
+    text: "-.- A"
+    color: 0, 0, 0, 1
+    bold: False
+    halign: 'center'
+    valign: 'middle'
+
+<LabelValorPotAtiva@Label>:  
+    text: "-.- W"
+    color: 0, 0, 0, 1
+    bold: False
+    halign: 'center'
+    valign: 'middle'
+
+<LabelValorDemanda@Label>:  
+    text: "-.- unid"
+    color: 0, 0, 0, 1
+    bold: False
+    halign: 'center'
+    valign: 'middle'
+
+
 <LabelMedidas@Label>:
     color: 0, 0, 0, 1
     bold: False
@@ -54,55 +84,3 @@
     halign: 'center'
     valign: 'middle'
 
-<BasePopup@Popup>:
-    title: ""
-    auto_dismiss: False
-
-    # TAMANHO EDITÁVEL
-    size_hint: 0.35, None
-    height: min(Window.height * 0.45, 400)
-
-    background: ''
-    background_color: 0, 0, 0, 0
-
-    BoxLayout:
-        orientation: 'vertical'
-        padding: dp(15)
-        spacing: dp(12)
-
-        canvas.before:
-            Color:
-                rgba: 0.905, 0.905, 0.905, 1   # #e7e7e7
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [dp(12)]
-
-        # TÍTULO
-        Label:
-            text: root.title
-            bold: True
-            color: 0, 0, 0, 1
-            size_hint_y: None
-            height: dp(35)
-            font_size: min(Window.width, Window.height) * 0.022
-            halign: 'left'
-            valign: 'middle'
-            text_size: self.size
-
-        #CONTEÚDO DOS POPUPS FILHOS
-        BoxLayout:
-            id: content_box
-            orientation: 'vertical'
-            spacing: dp(10)
-
-        # RODAPÉ PADRÃO
-        BoxLayout:
-            size_hint_y: None
-            height: dp(50)
-
-            Widget:
-
-            RoundedButton:
-                text: "Fechar"
-                on_release: root.dismiss()
