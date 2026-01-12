@@ -78,4 +78,95 @@
                 height: 40
                 on_release: 
                     root.dismiss() #fecha a janela e volta pra raiz
+
+<ComandoPopup>:
+    title: "Comandos de Partida do Motor"
+    size_hint_y: None
+    size_hint_x: 0.5
+    height: 300
+    BoxLayout:
+        id: layout_base
+        orientation: 'horizontal'
+        BoxLayout:
+            id: tipo_partida
+            orientation: 'vertical'
+            Label:
+                id: texto
+                text: "SELECIONE O TIPO DE PARTIDA"
+                color: 0, 0, 0, 1
+                bold: False
+                font_size: 18
+            RoundedButton:
+                text: "TSYS DIRETA"
+                #VER A POSICAO DESSE BOTAO
+                #on_press: root.selecionar_partida('TSYS DIRETA')
+            RoundedButton:
+                text: "ATV31 INVERSOR"
+            RoundedButton:
+                text: "ATS48 SOFT-START"
+            RoundedButton:
+                text: "FECHAR"
+                on_release: 
+                    root.dismiss() #fecha a janela e volta pra raiz
+        BoxLayout:
+            id: layoutPartida
+            orientation: 'vertical'
+            Label:
+                id: configMotor
+                text: "ATS48"
+                color: 0, 0, 0, 1
+                bold: True
+                font_size: 18
+            GridLayout:
+                cols: 2
+                rows: 2
+                Label:
+                    text: "ACC"
+                    font_size: 14
+                TextInput:
+                    id: txt_ip
+                    text: "10s"
+                    font_size: 14
+                    halign: 'center'
+                    valign: 'middle'
+                Label:
+                    text: "DCC"
+                    font_size: 14
+                TextInput:
+                    id: txt_port
+                    text: "10s"
+                    font_size: 14
+                    halign: 'center'
+                    valign: 'middle'
         
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                id: religamento
+                text: "RELIGAMENTO"
+                color: 1, 1, 1, 1
+                bold: False
+                font_size: 18
+
+<TemperaturaPopup>:
+    title: "Exibir Temperaturas"
+    size_hint_y: None
+    size_hint_x: 0.3
+    height: 150
+
+<MedidasPopup>:
+    title: "Exibir Medidas"
+    size_hint_y: None
+    size_hint_x: 0.3
+    height: 150
+
+<GraficoPopup>:
+    title: "Janela de Gráficos"   #tem que ser do tamanho da tela
+    size_hint_y: 1
+    size_hint_x: 1 
+
+<BancoDadosPopup>:
+    title: "Configuração Banco de Dados"
+    size_hint_y: None
+    size_hint_x: 0.3
+    height: 150

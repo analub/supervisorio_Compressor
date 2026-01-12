@@ -1,5 +1,7 @@
 from kivy.uix.popup import Popup
 
+# Aqui serão colocados os popups do supervisório
+
 class ModbusPopup(Popup):
     """
         Popup para configuração do protocolo Modbus
@@ -16,3 +18,34 @@ class ScanPopup(Popup):
         """
         super().__init__(**kwargs)
         self.ids.txt_st.text = str(scantime)
+
+class ComandoPopup(Popup):
+    """
+        Popup para enviar comandos de partida ao sistema
+    """
+    pass
+
+class TemperaturaPopup(Popup):
+    """
+        Popup para exibir informações de temperatura
+    """
+    pass
+
+class MedidasPopup(Popup):
+    """
+        Popup para exibir informações de medidas
+    """
+    pass
+
+class GraficoPopup(Popup):
+    """
+        Popup para exibir gráficos
+    """
+    pass
+
+class BancoDadosPopup(Popup):
+    """
+        Popup para exibir informações do banco de dados
+    """
+    pass
+
