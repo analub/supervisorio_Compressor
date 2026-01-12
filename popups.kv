@@ -272,8 +272,8 @@
 
         # ================= GRID PRINCIPAL ================= #
         GridLayout:
-            cols: 5
-            spacing: 10
+            cols: 4
+            spacing: 5
 
             # COLUNA 1: TENSÃO =======================================
             BoxLayout:
@@ -405,92 +405,114 @@
                         id: thd_corrente_n; 
 
             # ============================================================
-            # COLUNA 4 – POTÊNCIA ATIVA
+            # COLUNA 4 – POTÊNCIA (ATIVA / REATIVA / APARENTE / FP)
             # ============================================================
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
 
                 Label:
-                    text: "[b]Potência Ativa[/b]"
+                    text: "Potência"
+                    bold: True
                     color: 0, 0, 0, 1
-                    markup: True
                     font_size: 18
                     size_hint_y: None
                     height: 30
 
                 GridLayout:
                     cols: 2
-                    row_default_height: 30
-                    row_force_default: True
+                    spacing: 10
 
-                    Label: 
-                        text: "Fase R"
-                        color: 0, 0, 0, 1
-                    LabelValorPotAtiva: 
-                        id: ativa_r; 
+                    # ================= SUBCOLUNA 1 – ATIVA =================
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
 
-                    Label: 
-                        text: "Fase S"
-                        color: 0, 0, 0, 1
-                    LabelValorPotAtiva: 
-                        id: ativa_s; 
+                        Label:
+                            text: "Ativa"
+                            bold: True
+                            color: 0, 0, 0, 1
+                            font_size: 16
+                            size_hint_y: None
+                            height: 25
 
-                    Label: 
-                        text: "Fase T"
-                        color: 0, 0, 0, 1
-                    LabelValorPotAtiva: 
-                        id: ativa_t; 
+                        GridLayout:
+                            cols: 2
+                            row_default_height: 30
+                            row_force_default: True
 
-                    Label: 
-                        text: "Total"
-                        color: 0, 0, 0, 1
-                    LabelValorPotAtiva: 
-                        id: ativa_total; 
+                            Label:
+                                text: "R"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_r
 
-            # ============================================================
-            # COLUNA 5 – POTÊNCIA REATIVA
-            # ============================================================
-            BoxLayout:
-                orientation: 'vertical'
-                spacing: 5
+                            Label:
+                                text: "S"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_s
 
-                Label:
-                    text: "[b]Potência Reativa[/b]"
-                    color: 0, 0, 0, 1
-                    markup: True
-                    font_size: 18
-                    size_hint_y: None
-                    height: 30
+                            Label:
+                                text: "T"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_t
 
-                GridLayout:
-                    cols: 2
-                    row_default_height: 30
-                    row_force_default: True
+                    # ================= SUBCOLUNA 2 – OUTRAS =================
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
 
-                    Label: 
-                        text: "Fase R"
-                        color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: reativa_r; 
+                        Label:
+                            text: "Reativa"
+                            bold: True
+                            color: 0, 0, 0, 1
+                            font_size: 16
+                            size_hint_y: None
+                            height: 25
 
-                    Label: 
-                        text: "Fase S"
-                        color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: reativa_s; 
+                        Label:
+                            id: reativa_total
+                            text: "-.- var"
+                            color: 0, 0, 0, 1
+                            bold: False
+                            halign: 'center'
+                            valign: 'middle'
 
-                    Label: 
-                        text: "Fase T"
-                        color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: reativa_t; 
 
-                    Label: 
-                        text: "Total"
-                        color: 0, 0, 0, 1
-                    LabelValorDemanda: 
-                        id: reativa_total; 
+                        Label:
+                            text: "Aparente"
+                            bold: True
+                            color: 0, 0, 0, 1
+                            font_size: 16
+                            size_hint_y: None
+                            height: 25
+
+                        Label:
+                            id: aparente_total
+                            text: "-.- VA"
+                            color: 0, 0, 0, 1
+                            bold: False
+                            halign: 'center'
+                            valign: 'middle'
+
+                        Label:
+                            text: "Fator de Potência"
+                            bold: True
+                            color: 0, 0, 0, 1
+                            font_size: 16
+                            size_hint_y: None
+                            height: 25
+
+                        Label:
+                            id: fator_potencia
+                            text: "-.-"
+                            color: 0, 0, 0, 1
+                            bold: False
+                            halign: 'center'
+                            valign: 'middle'
+
 
         # ================= BOTÃO FECHARC =================
         BoxLayout:
