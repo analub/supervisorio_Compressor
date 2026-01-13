@@ -11,7 +11,7 @@ class MainApp(App):
     """
         Classe principal do aplicativo
     """
-    def build(self):    
+    def build(self):     
         """
         Método que gera o aplicativo com base no widget principal.
         """

@@ -4,9 +4,9 @@
     title: "CONFIGURAÇÕES MODBUS"
     bold: True
     background_color: 0, 0, 0, 0
-    size_hint_x: 0.4
-    size_hint_y: None
+    size_hint: None, None
     height: 300
+    width: 400      
 
     BoxLayout:
         orientation: 'vertical'
@@ -84,7 +84,6 @@
 
             Widget:
 
-        
 <ScanPopup>:
     title: "Configuração ScanTime"
     size_hint_y: None
@@ -122,75 +121,424 @@
                     root.dismiss() #fecha a janela e volta pra raiz
 
 <ComandoPopup>:
-    title: "Comandos de Partida do Motor"
-    size_hint_y: None
-    size_hint_x: 0.5
-    height: 300
+    title: "COMANDOS DE PARTIDA DO MOTOR"
+    size_hint: None, None
+    width: 970
+    height: 500
+    background_color: 0, 0, 0, 0
+
     BoxLayout:
-        id: layout_base
-        orientation: 'horizontal'
+        orientation: 'vertical'
+        size_hint: 1, 1
+
         BoxLayout:
-            id: tipo_partida
-            orientation: 'vertical'
-            Label:
-                id: texto
-                text: "SELECIONE O TIPO DE PARTIDA"
-                color: 0, 0, 0, 1
-                bold: False
-                font_size: 18
+            orientation: 'horizontal'
+            size_hint: 1, 0.8
+            canvas.before:
+                Color:
+                    rgba: 0.788, 0.780, 0.780, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            # =======================
+            # COLUNA ESQUERDA - TIPOS
+            # =======================
             BoxLayout:
                 orientation: 'vertical'
-                RoundedButton:
-                    text: "TSYS DIRETA"
-                    #VER A POSICAO DESSE BOTAO
-                    #on_press: root.selecionar_partida('TSYS DIRETA')
-                RoundedButton:
-                    text: "ATV31 INVERSOR"
-                RoundedButton:
-                    text: "ATS48 SOFT-START"
+                size_hint_x: 0.3
+                padding: 15
+                spacing: 15
+
+                Label:
+                    text: "SELECIONE TIPO\nDA PARTIDA"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    halign: 'center'
+                    valign: 'middle'
+                    text_size: self.size
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 12
+                    size_hint_y: 0.8
+                    RoundedButton:
+                        text: "TESYS DIRETA"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("tesysDireta")
+                        size_hint_x: 1
+
+                    RoundedButton:
+                        text: "ATV31 INVERSOR"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("atv31")
+                        size_hint_x: 1
+
+                    RoundedButton:
+                        text: "ATS48 SOFT-START"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("ats48")
+                        size_hint_x: 1
+
+            # =======================
+            # COLUNA DIREITA - OPÇÕES
+            # =======================
+            BoxLayout:
+                size_hint_x: 0.3
+                padding: 10
+
+                ScreenManager:
+                    id: sm
+                    #current: "vazia"    
+
+                    TesysDiretaScreen:
+                        name: "tesysDireta"
+
+                    ATS48Screen:
+                        name: "ats48"
+
+                    ATV31Screen:
+                        name: "atv31"
+
+                    VaziaScreen:
+                        name: "vazia"
+
+
+            # ==================================
+            # COLUNA 3 - RELIGAMENTO
+            # ==================================
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.30
+                padding: 15
+                spacing: 10
+
+                canvas.before:
+                    Color:
+                        rgba: 0.788, 0.780, 0.780, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+                Label:
+                    text: "RELIGAMENTO"
+                    color: 0, 0, 0, 1
+                    halign: 'center'
+                    valign: 'middle'
+                    bold: True
+                    font_size: 18
+
+                # -------- MODO --------
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 5
+                    # size_hint_y: 0.3
+
+                    Label:
+                        text: "Modo:"
+                        color: 0, 0, 0, 1
+                        font_size: 18
+                        bold: True
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        Label:
+                            text: "Manual"
+                            color: 0, 0, 0, 1
+                        CheckBox:
+                            group: "relig"
+                            active: True
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        Label:
+                            text: "Automático"
+                            color: 0, 0, 0, 1
+                        CheckBox:
+                            group: "relig"
+
+                #Widget:  # espaçador
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 5
+                    size_hint_y: 0.7
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 5
+                        # size_hint_x: 0.5
+
+                        # -------- PRESSÃO --------
+                        Label:
+                            text: "Mínima (kgf/cm²)"
+                            color: 0, 0, 0, 1
+                            bold: True
+                            font_size: 18
+
+                        TextInput:
+                            text: "0.0"
+                            color: 0, 0, 0, 1
+                            multiline: False
+                            input_filter: 'float'
+
+                    # Widget:  # espaçador
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 5
+                        # size_hint_y: 0.5
+                            
+                        Label:
+                            text: "Máxima (kgf/cm²)"
+                            color: 0, 0, 0, 1
+                            bold: True
+                            font_size: 18
+
+                        TextInput:
+                            text: "5.0"
+                            color: 0, 0, 0, 1
+                            multiline: False
+                            input_filter: 'float'
+     # ================= BOTÃO FECHAR =================
+        # BoxLayout:
+        #     size_hint: 1, 0.2
+        #     canvas.before:
+        #         Color:
+        #             rgba: 0.788, 0.780, 0.780, 1
+        #         Rectangle:
+        #             pos: self.pos
+        #             size: self.size
+
+        #     Widget:
+
+        #     RoundedButton:
+        #         text: "FECHAR"
+        #         size_hint: None, None
+        #         size: self.texture_size[0] + 40, 40
+        #         pos_hint: {"center_x": 0.5}
+        #         on_release: root.dismiss()
+
+        #     Widget:
+
+
+        # ================= BOTÃO FECHAR (MANTIDO) =================
         BoxLayout:
-            id: layoutPartida
-            orientation: 'vertical'
-            Label:
-                id: configMotor
-                text: "ATS48"
-                color: 0, 0, 0, 1
-                bold: True
-                font_size: 18
-            GridLayout:
-                cols: 2
-                rows: 2
-                Label:
-                    text: "ACC"
-                    font_size: 14
-                TextInput:
-                    id: txt_ip
-                    text: "10s"
-                    font_size: 14
-                    halign: 'center'
-                    valign: 'middle'
-                Label:
-                    text: "DCC"
-                    font_size: 14
-                TextInput:
-                    id: txt_port
-                    text: "10s"
-                    font_size: 14
-                    halign: 'center'
-                    valign: 'middle'
+            size_hint: 1,0.2
+            # height: 60
+            canvas.before:
+                Color:
+                    rgba: 0.788, 0.780, 0.780, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
         
-        BoxLayout:
-            orientation: 'vertical'
+# SOFT-START SCREEN
+<ATS48Screen@Screen>:     
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "ATS48 - Soft Starter"
+            size_hint:1, 0.2
+            bold: True
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+        Label:
+            text: "Digite os parâmetros de\naceleração e desaceleração:"
+            size_hint:1, 0.1
+            bold: False
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+        Label:
+            text: "MIN:10s e MAX:60s"
+            size_hint:1, 0.1
+            bold: True
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 16
+
+        GridLayout:
+            cols: 2
+            spacing: 10
+            size_hint:1, 0.6
+
             Label:
-                id: religamento
-                text: "RELIGAMENTO"
-                color: 1, 1, 1, 1
-                bold: False
-                font_size: 18
-        RoundedButton:
-            text: "FECHAR"
-            on_release: 
-                root.dismiss() #fecha a janela e volta pra raiz
+                text: "ACC"
+                color: 0, 0, 0, 1
+            TextInput:
+                text: "10"
+                color: 0, 0, 0, 1
+                multiline: False
+
+            Label:
+                text: "DCC"
+                color: 0, 0, 0, 1
+            TextInput:
+                text: "10"
+                color: 0, 0, 0, 1
+                multiline: False
+
+<VaziaScreen@Screen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "CONFIGURAÇÃO DO \nTIPO DE PARTIDA"
+            color: 0, 0, 0, 1
+            bold: True
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+            text_size: self.size
+        Label:
+            text: "Nenhum tipo de \n  partida selecionado"
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.size
+            font_size: 16
+
+<TesysDiretaScreen@Screen>:
+    BoxLayout:
+        Label:
+            text: "TESYS Direta \nselecionada"
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+
+<ATV31Screen@Screen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "ATV31 - Inversor"
+            color: 0, 0, 0, 1
+            bold: True
+            font_size: 18
+
+        Label:
+            text: "Velocidade (Hz)"
+            color: 0, 0, 0, 1
+
+        Slider:
+            id: vel_slider
+            min: 0
+            max: 60
+            value: 0
+
+        Label:
+            text: f"{int(vel_slider.value)} Hz"
+            color: 0, 0, 0, 1
+
+
+# <ComandoPopup>:
+#     title: "COMANDOS DE PARTIDA DO MOTOR"
+#     bold: True
+#     background_color: 0, 0, 0, 0
+#     size_hint: None, None
+#     height: 400
+#     width: 900      
+
+#     BoxLayout:
+#         id: layout_base
+#         orientation: 'horizontal'
+#         canvas.before:
+#             Color:
+#                 rgba: 0.788, 0.780, 0.780, 1
+#             Rectangle:
+#                 pos: self.pos
+#                 size: self.size
+#         BoxLayout:
+#             id: tipo_partida
+#             orientation: 'vertical'
+#             Label:
+#                 id: texto
+#                 text: "SELECIONE O TIPO DE PARTIDA"
+#                 color: 0, 0, 0, 1
+#                 bold: False
+#                 font_size: 18
+#             BoxLayout:
+#                 orientation: 'vertical'
+#                 RoundedButton:
+#                     text: "TSYS DIRETA"
+#                     #VER A POSICAO DESSE BOTAO
+#                     #on_press: root.selecionar_partida('TSYS DIRETA')
+#                 RoundedButton:
+#                     text: "ATV31 INVERSOR"
+#                 RoundedButton:
+#                     text: "ATS48 SOFT-START"
+#         BoxLayout:
+#             id: layoutPartida
+#             orientation: 'vertical'
+#             Label:
+#                 id: configMotor
+#                 text: "ATS48"
+#                 color: 0, 0, 0, 1
+#                 bold: True
+#                 font_size: 18
+#             GridLayout:
+#                 cols: 2
+#                 rows: 2
+#                 Label:
+#                     text: "ACC"
+#                     font_size: 14
+#                 TextInput:
+#                     id: txt_ip
+#                     text: "10s"
+#                     font_size: 14
+#                     halign: 'center'
+#                     valign: 'middle'
+#                 Label:
+#                     text: "DCC"
+#                     font_size: 14
+#                 TextInput:
+#                     id: txt_port
+#                     text: "10s"
+#                     font_size: 14
+#                     halign: 'center'
+#                     valign: 'middle'
+        
+#         BoxLayout:
+#             orientation: 'vertical'
+#             Label:
+#                 id: religamento
+#                 text: "RELIGAMENTO"
+#                 color: 1, 1, 1, 1
+#                 bold: False
+#                 font_size: 18
+#         RoundedButton:
+#             text: "FECHAR"
+#             on_release: 
+#                 root.dismiss() #fecha a janela e volta pra raiz
+
+
 
 <TemperaturaPopup>:
     title: "TEMPERATURAS DO MOTOR"
@@ -222,6 +570,7 @@
 
             Label:
                 text: "Carcaça"
+                bold: True
                 font_size: 18
                 color: 0, 0, 0, 1
                 size_hint_x: 0.5

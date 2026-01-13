@@ -1,5 +1,6 @@
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
+from kivy.uix.screenmanager import Screen
 
 # Aqui serão colocados os popups do supervisório
 
@@ -23,6 +24,44 @@ class ScanPopup(Popup):
 class ComandoPopup(Popup):
     """
         Popup para enviar comandos de partida ao sistema
+    """
+    def trocar_tela(self, nome_tela):
+        """
+        Troca a subtela de configuração conforme o tipo de partida
+        """
+        self.ids.sm.current = nome_tela
+    def on_open(self):
+        # garante que todas as screens já foram carregadas
+        self.ids.sm.current = "vazia"
+
+
+# =====================================
+# SCREENS DO COMANDO DE PARTIDA
+# =====================================
+
+class VaziaScreen(Screen):
+    """
+    Tela inicial (nenhuma partida selecionada)
+    """
+    pass
+
+class TesysDiretaScreen(Screen):
+    """
+    Tela de configuração do motor Tesys Direta
+    """
+    pass
+
+
+class ATS48Screen(Screen):
+    """
+    Tela de configuração do Soft-Starter ATS48
+    """
+    pass
+
+
+class ATV31Screen(Screen):
+    """
+    Tela de configuração do Inversor ATV31
     """
     pass
 
