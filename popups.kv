@@ -247,19 +247,25 @@
                         orientation: 'horizontal'
                         Label:
                             text: "Manual"
+                            text_size: self.size
+                            halign: 'left'
+                            valign: 'middle'
                             color: 0, 0, 0, 1
-                        CheckBox:
+                        GrayCheckBox:
                             group: "relig"
                             active: True
                     BoxLayout:
                         orientation: 'horizontal'
                         Label:
                             text: "Automático"
+                            text_size: self.size
+                            halign: 'left'
+                            valign: 'middle'
                             color: 0, 0, 0, 1
-                        CheckBox:
-                            group: "relig"
+                        GrayCheckBox:
+                            group: "relig"      
 
-                #Widget:  # espaçador
+                # Widget:  # espaçador
 
                 BoxLayout:
                     orientation: 'vertical'
@@ -302,9 +308,10 @@
                             color: 0, 0, 0, 1
                             multiline: False
                             input_filter: 'float'
-     # ================= BOTÃO FECHAR =================
+
         # BoxLayout:
-        #     size_hint: 1, 0.2
+        #     size_hint: 1,0.2
+        #     # height: 60
         #     canvas.before:
         #         Color:
         #             rgba: 0.788, 0.780, 0.780, 1
@@ -315,19 +322,17 @@
         #     Widget:
 
         #     RoundedButton:
-        #         text: "FECHAR"
+        #         text: "Fechar"
         #         size_hint: None, None
-        #         size: self.texture_size[0] + 40, 40
+        #         size: self.texture_size[0] + 40, 45
         #         pos_hint: {"center_x": 0.5}
         #         on_release: root.dismiss()
 
         #     Widget:
 
-
-        # ================= BOTÃO FECHAR (MANTIDO) =================
         BoxLayout:
-            size_hint: 1,0.2
-            # height: 60
+            size_hint: 1, 0.2
+            padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
             canvas.before:
                 Color:
                     rgba: 0.788, 0.780, 0.780, 1
@@ -600,7 +605,7 @@
             Widget:
 
             RoundedButton:
-                text: "FECHAR"
+                text: "Fechar"
                 size_hint: None, None
                 size: self.texture_size[0] + 40, 40
                 pos_hint: {"center_x": 0.5}
