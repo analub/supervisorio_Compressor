@@ -84,3 +84,27 @@
     halign: 'center'
     valign: 'middle'
 
+<GrayCheckBox@CheckBox>:
+    size_hint: None, None
+    size: 26, 26
+
+    # Remove aparência padrão
+    background_checkbox_normal: ''
+    background_checkbox_down: ''
+
+    canvas.before:
+        # Fundo da bolinha (cinza claro)
+        Color:
+            rgba: 0.78, 0.78, 0.78, 1
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+    canvas.after:
+        # Bolinha interna (cinza escuro) quando ativo
+        Color:
+            rgba: 0.35, 0.35, 0.35, 1 if self.active else 0, 0, 0, 0
+        Ellipse:
+            pos: (self.x + self.width * 0.30,self.y + self.height * 0.30)
+            size: (self.width * 0.40, self.height * 0.40)
+
