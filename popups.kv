@@ -193,62 +193,107 @@
                 root.dismiss() #fecha a janela e volta pra raiz
 
 <TemperaturaPopup>:
-    title: "Exibir Temperaturas"
-    size_hint_y: None
-    size_hint_x: 0.5
-    height: 300
+    title: "TEMPERATURAS DO MOTOR"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    width: 400      
+    height: 250
+
     BoxLayout:
-        id: layout
         orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
         canvas.before:
             Color:
-                rgba:0.9, 0.9, 0.9, 1 #cinza claro
+                rgba: 0.788, 0.780, 0.780, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
-        GridLayout:
-            cols: 2
-            rows: 4
-            Label:
-                text: "Enrolamento R Motor"
-                font_size: 16
-            Label:
-                id: temp_R
-                text: "-.- °C"
-                font_size: 16
-            Label:
-                text: "Enrolamento S Motor"
-                font_size: 16
-            Label:
-                id: temp_S
-                text: "-.- °C"
-                font_size: 16
-            Label:
-                text: "Enrolamento T Motor"
-                font_size: 16
-            Label:
-                id: temp_T
-                text: "-.- °C"
-                font_size: 16
+
+        Widget:   # espaçador superior
+
+        # ================= TEMPERATURA CARCAÇA =================
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 40
+
             Label:
                 text: "Carcaça"
-                font_size: 16
+                font_size: 18
+                color: 0, 0, 0, 1
+                size_hint_x: 0.5
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+
+            Widget:
+
             Label:
                 id: temp_C
                 text: "-.- °C"
-                font_size: 16
-        FloatLayout:
-            size_hint: 1,0.2
-            canvas: 
-                Color:
-                    rgba: 0.8, 0.8, 0.8, 1 
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
+                font_size: 18
+                color: 0, 0, 0, 1
+                size_hint_x: 0.5
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+
+        Widget:   # espaçador entre texto e botão
+
+        # ================= BOTÃO FECHAR =================
+        BoxLayout:
+            size_hint_y: None
+            height: 45
+
+            Widget:
+
             RoundedButton:
                 text: "FECHAR"
-                on_release: 
-                    root.dismiss() #fecha a janela e volta pra raiz  
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 40
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
+        Widget:   # espaçador inferior
+
+
+        #GridLayout:
+        #    cols: 2
+        #    rows: 4
+        #   Label:
+        #        text: "Enrolamento R Motor"
+        #        font_size: 16
+        #    Label:
+        #        id: temp_R
+        #        text: "-.- °C"
+        #        font_size: 16
+        #    Label:
+        #        text: "Enrolamento S Motor"
+        #        font_size: 16
+        #     Label:
+        #         id: temp_S
+        #         text: "-.- °C"
+        #         font_size: 16
+        #     Label:
+        #         text: "Enrolamento T Motor"
+        #         font_size: 16
+        #     Label:
+        #         id: temp_T
+        #         text: "-.- °C"
+        #         font_size: 16
+        #     Label:
+        #         text: "Carcaça"
+        #         font_size: 16
+        #     Label:
+        #         id: temp_C
+        #         text: "-.- °C"
+        #         font_size: 16
+        
 
 <MedidasPopup>:
     title: "MEDIDAS ELÉTRICAS"
