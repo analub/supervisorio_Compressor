@@ -113,7 +113,7 @@ class MainWidget(BoxLayout):
             elif 'corr' in key:
                 plot_color = (1, 0.5, 0, 1) # Laranja (Correntes)
             else:
-                plot_color = (0, 1, 0, 1) # Verde (Outros)
+                plot_color = (0, 1, 0, 1) # Verde (Outros) #Remover
             # Adicionamos as informações de tratamento na tag
             setup = self._tag_setup.get(key, {'type': 'int', 'div': 1}) # Padrão é inteiro div 1
             self._tags[key] = {
