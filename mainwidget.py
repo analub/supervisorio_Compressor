@@ -179,12 +179,13 @@ class MainWidget(BoxLayout):
         self._serverPort = port
         self._modbusClient.host = self._serverIP
         self._modbusClient.port = self._serverPort
+        print("conectou bbs")
         try:
             # Muda o cursor para 'espera' enquanto tenta conectar
             Window.set_system_cursor("wait")
             self._modbusClient.open()
             Window.set_system_cursor("arrow") # Volta o cursor ao normal
-            if self._modbusClient.is_open():
+            if self._modbusClient.is_open:
                 # Inicia a Thread para que a interface não trave durante o loop de leitura
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
