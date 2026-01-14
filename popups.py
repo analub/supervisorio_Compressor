@@ -1,6 +1,9 @@
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
 from kivy.uix.screenmanager import Screen
+from kivy.uix.label import Label
+from kivy_garden.graph import LinePlot
+from kivy.uix.boxlayout import BoxLayout
 
 # Aqui serão colocados os popups do supervisório
 
@@ -81,6 +84,11 @@ class GraficoPopup(Popup):
     """
         Popup para exibir gráficos
     """
+    # def __init__(self, xmax,plot_color, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.plot = LinePlot(line_width=1.5, color=plot_color) #linha que será plotada no gráfico de temperatura, o gráfico é só o fundo
+    #     self.ids.graph.add_plot(self.plot)
+    #     self.ids.graph.xmax = xmax
     pass
 
 class BancoDadosPopup(Popup):
@@ -89,3 +97,16 @@ class BancoDadosPopup(Popup):
     """
     pass
 
+class historicoPopup(Popup):
+    """
+        Popup para exibir hisotorico do banco de dados
+    """
+    def __init__(self,**kwargs):
+        super().__init__()
+    
+
+class LabeledCheckBoxDataGraph(BoxLayout):
+    pass
+
+class LabeledCheckBoxDataGraph(BoxLayout):  
+    pass

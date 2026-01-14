@@ -1,5 +1,6 @@
 #:kivy 2.1.0
 
+# ====== JANELA DE CONFIGURAÇÕES ==========#
 <ModBusPopup>:
     title: "CONFIGURAÇÕES MODBUS"
     bold: True
@@ -8,7 +9,7 @@
     height: 300
     width: 400      
 
-    BoxLayout:
+    BoxLayout:                          #BoxLayout Pai
         orientation: 'vertical'
         padding: 15
         spacing: 10
@@ -915,6 +916,52 @@
                             text: "-.-"
                             color: 0, 0, 0, 1
 
+        # ================= BOTÃO FECHAR =================
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
+# <BancoDadosPopup>:
+<historicoPopup>:
+    title: "BANCO DE DADOS"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    width: 650
+    height: 550
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: "Colocar histórico de dados aqui!!"
+            font_size: 18
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint_x: 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.size
+
         # ================= BOTÃO FECHAR (MANTIDO) =================
         BoxLayout:
             size_hint_y: None
@@ -932,13 +979,135 @@
             Widget:
 
 
+# =================== GRÁFICO ================#
 <GraficoPopup>:
-    title: "Janela de Gráficos"   #tem que ser do tamanho da tela
-    size_hint_y: 1
-    size_hint_x: 1 
+    title: "Gráfico"
+    BoxLayout:
+        orientation:'vertical'
+        TimeSeriesGraph:
+            id: graph
+            xlabel: 'Horario'
+            ylabel: 'Amplitude'
+            background_color: 0.5,0.5,0.5,0.5
+            x_ticks_minor: 1        #subdivisões do eixo horizontal
+            x_ticks_major: 5        #grid
+            y_ticks_major: 5 
+            y_grid_label: True
+            x_grid_label: True
+            padding: 5              #espaçamento entre os labels
+            x_grid: True
+            y_grid: True 
+            xmin: 0
+            ymin: 0
+            ymax: 100
+        BoxLayout:
+            orientation:'horizontal'
+            size_hint:(1,0.05)
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.5,1)
+                Label:
+                    size_hint: (0.3,1) 
+                    text:'Número de pontos do gráfico'
+                LabeledCheckBoxDataGraph:
+                    id: mp20
+                    on_kv_post:
+                        self.ids.label.text = '20' 
+                        self.ids.checkbox.group = 'cd_group' 
+                        self.ids.checkbox.active = True 
+                LabeledCheckBoxDataGraph:
+                    id: mp50
+                    on_kv_post:
+                        self.ids.label.text = '50' 
+                        self.ids.checkbox.group = 'cd_group'
+                LabeledCheckBoxDataGraph:
+                    id: mp100
+                    on_kv_post:
+                        self.ids.label.text = '100' 
+                        self.ids.checkbox.group = 'cd_group'
+            Button:
+                text: 'Fechar'  
+                size_hint: (0.2,1)
+                on_release: root.dismiss() 
 
+<LabeledCheckBoxDataGraph>:
+    orientation: 'horizontal'
+    size_hint: (0.1,1)
+    CheckBox:
+        id: checkbox
+        on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
+    Label:
+        id: label 
+
+
+# =================== HISTORICO ================#
 <BancoDadosPopup>:
-    title: "Configuração Banco de Dados"
-    size_hint_y: None
-    size_hint_x: 0.3
-    height: 150
+    title: "Histórico do Banco de Dados"
+    BoxLayout:
+        orientation: 'vertical'
+        TimeSeriesGraph:
+            id: graph
+            xlabel: 'Horario'
+            ylabel: 'Medicoes'
+            background_color: 0.5, 0.5, 0.5, 0.5
+            x_ticks_minor: 1
+            x_ticks_major: 5
+            y_ticks_major: 100
+            y_grid_label: True
+            x_grid_label: True
+            padding: 5
+            x_grid: True
+            y_grid: True
+            xmin: 0
+            ymin: 0
+            ymax: 500
+        BoxLayout:
+            id: sensores
+            orientation: 'horizontal'
+            size_hint: (1, 0.1)
+            Spinner:
+                id: dropdown
+                text: "Selecione"
+                values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
+                on_text: app.root.muda_graph(self.text)
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.1)
+            Label:
+                text: 'Timestamp inicial \r\n [size=12] (DD/MM/AAAA HH:MM:SS) [/size]'
+                halign: 'center'
+                markup: True
+            TextInput:
+                id: txt_init_time
+                size_hint: (1, 0.8)
+                halign: 'center'
+                valign: 'middle'
+                multiline: False
+            Label:
+                text: 'Timestamp final \r\n [size=12] (DD/MM/AAAA HH:MM:SS) [/size]'
+                halign: 'center'
+                markup: True
+            TextInput:
+                id: txt_final_time
+                size_hint: (1, 0.8)
+                halign: 'center'
+                valign: 'middle'
+                multiline: False
+            Button:
+                text: 'Fechar'
+                size_hint: (1, 0.8)
+                on_release: root.dismiss()
+
+<LabeledCheckBoxHistGraph>:
+    orientation: 'vertical'
+    size_hint: (0.2, 1)
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (0.2, 1)
+        Spinner:
+            id: dropdown
+            text: "Selecione"
+            values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "temp_r", "temp_s", "temp_t", "temp_carc", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
+            on_text: app.root.muda_graph(self.text)
+
