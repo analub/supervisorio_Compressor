@@ -35,7 +35,7 @@ def db_writer(self):
 
             values = data['values']
 
-            row = ProcessData(
+            row = CompData(
                 timestamp=data['timestamp'],
                 **{k: values.get(k) for k in values}
             )
