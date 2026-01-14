@@ -9,19 +9,19 @@
     height: 300
     width: 400      
 
-    BoxLayout:                          #BoxLayout Pai
+    BoxLayout:                                         #BoxLayout Pai
         orientation: 'vertical'
         padding: 15
         spacing: 10
         canvas.before:
             Color:
-                rgba: 0.788, 0.780, 0.780, 1
+                rgba: 0.788, 0.780, 0.780, 1            #cor cinza igual da planta base
             Rectangle:
                 pos: self.pos
                 size: self.size
 
-        # ================= CAMPOS =================
-        GridLayout:
+        # CAMPOS IP E PORTA
+        GridLayout:                                     #Grid para IP e Porta
             cols: 2
             rows: 2
             size_hint_y: None
@@ -36,7 +36,7 @@
 
             TextInput:
                 id: txt_ip
-                text: "127.0.0.1"
+                text: "10.15.30.182"
                 font_size: 18
                 color: 0, 0, 0, 1
                 halign: 'center'
@@ -62,7 +62,7 @@
                 background_active: ''
                 background_color: 0.788, 0.780, 0.780, 1
 
-        # ================= BOTÕES =================
+        # BOTÕES CONECTAR E FECHAR -> Usam formato arredondado (widgets_auxiliares)
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -121,6 +121,7 @@
                 on_release: 
                     root.dismiss() #fecha a janela e volta pra raiz
 
+# JANELA DE COMANDOS DO MOTOR
 <ComandoPopup>:
     title: "COMANDOS DE PARTIDA DO MOTOR"
     size_hint: None, None
@@ -128,7 +129,7 @@
     height: 500
     background_color: 0, 0, 0, 0
 
-    BoxLayout:
+    BoxLayout:                          #BoxLayout Pai
         orientation: 'vertical'
         size_hint: 1, 1
 
@@ -142,9 +143,7 @@
                     pos: self.pos
                     size: self.size
 
-            # =======================
-            # COLUNA ESQUERDA - TIPOS
-            # =======================
+            # PRIMEIRA COLUNA: TIPOS DE PARTIDA
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_x: 0.3
@@ -184,9 +183,7 @@
                         on_release: root.trocar_tela("ats48")
                         size_hint_x: 1
 
-            # =======================
-            # COLUNA DIREITA - OPÇÕES
-            # =======================
+            # SEGUNDA COLUNA: CONFIGURÇÃO DO TIPO DE PARTIDA
             BoxLayout:
                 size_hint_x: 0.3
                 padding: 10
@@ -205,12 +202,10 @@
                         name: "atv31"
 
                     VaziaScreen:
-                        name: "vazia"
+                        name: "vazia"               # screen vazia enquanto não seleciona nada
 
 
-            # ==================================
-            # COLUNA 3 - RELIGAMENTO
-            # ==================================
+            # TERCEIRA COLUNA: RELIGAMENTO
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_x: 0.30
@@ -232,7 +227,7 @@
                     bold: True
                     font_size: 18
 
-                # -------- MODO --------
+                # Modo: Manual / Automatico
                 BoxLayout:
                     orientation: 'vertical'
                     spacing: 5
@@ -266,9 +261,7 @@
                         GrayCheckBox:
                             group: "relig"      
 
-                # Widget:  # espaçador
-
-                BoxLayout:
+                BoxLayout:                          #Pressão Máxima e Minima
                     orientation: 'vertical'
                     spacing: 5
                     size_hint_y: 0.7
@@ -276,9 +269,6 @@
                     BoxLayout:
                         orientation: 'horizontal'
                         spacing: 5
-                        # size_hint_x: 0.5
-
-                        # -------- PRESSÃO --------
                         Label:
                             text: "Mínima (kgf/cm²)"
                             color: 0, 0, 0, 1
@@ -290,8 +280,6 @@
                             color: 0, 0, 0, 1
                             multiline: False
                             input_filter: 'float'
-
-                    # Widget:  # espaçador
 
                     BoxLayout:
                         orientation: 'horizontal'
@@ -310,28 +298,7 @@
                             multiline: False
                             input_filter: 'float'
 
-        # BoxLayout:
-        #     size_hint: 1,0.2
-        #     # height: 60
-        #     canvas.before:
-        #         Color:
-        #             rgba: 0.788, 0.780, 0.780, 1
-        #         Rectangle:
-        #             pos: self.pos
-        #             size: self.size
-
-        #     Widget:
-
-        #     RoundedButton:
-        #         text: "Fechar"
-        #         size_hint: None, None
-        #         size: self.texture_size[0] + 40, 45
-        #         pos_hint: {"center_x": 0.5}
-        #         on_release: root.dismiss()
-
-        #     Widget:
-
-        BoxLayout:
+        BoxLayout:                    # Para ajuste do botão
             size_hint: 1, 0.2
             padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
             canvas.before:
@@ -406,6 +373,7 @@
                 color: 0, 0, 0, 1
                 multiline: False
 
+# TELA VAZIA SCREEN
 <VaziaScreen@Screen>:
     BoxLayout:
         orientation: 'vertical'
@@ -428,6 +396,7 @@
             text_size: self.size
             font_size: 16
 
+# TESYS DIRETA SCREEN
 <TesysDiretaScreen@Screen>:
     BoxLayout:
         Label:
@@ -437,6 +406,7 @@
             valign: 'middle'
             font_size: 18
 
+# ATV31 SCREEN
 <ATV31Screen@Screen>:
     BoxLayout:
         orientation: 'vertical'
@@ -463,89 +433,7 @@
             text: f"{int(vel_slider.value)} Hz"
             color: 0, 0, 0, 1
 
-
-# <ComandoPopup>:
-#     title: "COMANDOS DE PARTIDA DO MOTOR"
-#     bold: True
-#     background_color: 0, 0, 0, 0
-#     size_hint: None, None
-#     height: 400
-#     width: 900      
-
-#     BoxLayout:
-#         id: layout_base
-#         orientation: 'horizontal'
-#         canvas.before:
-#             Color:
-#                 rgba: 0.788, 0.780, 0.780, 1
-#             Rectangle:
-#                 pos: self.pos
-#                 size: self.size
-#         BoxLayout:
-#             id: tipo_partida
-#             orientation: 'vertical'
-#             Label:
-#                 id: texto
-#                 text: "SELECIONE O TIPO DE PARTIDA"
-#                 color: 0, 0, 0, 1
-#                 bold: False
-#                 font_size: 18
-#             BoxLayout:
-#                 orientation: 'vertical'
-#                 RoundedButton:
-#                     text: "TSYS DIRETA"
-#                     #VER A POSICAO DESSE BOTAO
-#                     #on_press: root.selecionar_partida('TSYS DIRETA')
-#                 RoundedButton:
-#                     text: "ATV31 INVERSOR"
-#                 RoundedButton:
-#                     text: "ATS48 SOFT-START"
-#         BoxLayout:
-#             id: layoutPartida
-#             orientation: 'vertical'
-#             Label:
-#                 id: configMotor
-#                 text: "ATS48"
-#                 color: 0, 0, 0, 1
-#                 bold: True
-#                 font_size: 18
-#             GridLayout:
-#                 cols: 2
-#                 rows: 2
-#                 Label:
-#                     text: "ACC"
-#                     font_size: 14
-#                 TextInput:
-#                     id: txt_ip
-#                     text: "10s"
-#                     font_size: 14
-#                     halign: 'center'
-#                     valign: 'middle'
-#                 Label:
-#                     text: "DCC"
-#                     font_size: 14
-#                 TextInput:
-#                     id: txt_port
-#                     text: "10s"
-#                     font_size: 14
-#                     halign: 'center'
-#                     valign: 'middle'
-        
-#         BoxLayout:
-#             orientation: 'vertical'
-#             Label:
-#                 id: religamento
-#                 text: "RELIGAMENTO"
-#                 color: 1, 1, 1, 1
-#                 bold: False
-#                 font_size: 18
-#         RoundedButton:
-#             text: "FECHAR"
-#             on_release: 
-#                 root.dismiss() #fecha a janela e volta pra raiz
-
-
-
+# JANELA DE TEMPERATURA DO MOTOR
 <TemperaturaPopup>:
     title: "TEMPERATURAS DO MOTOR"
     bold: True
@@ -598,7 +486,7 @@
 
         Widget:   # espaçador entre texto e botão
 
-        # ================= BOTÃO FECHAR =================
+        # BOTÃO FECHAR
         BoxLayout:
             size_hint_y: None
             height: 45
@@ -617,39 +505,7 @@
         Widget:   # espaçador inferior
 
 
-        #GridLayout:
-        #    cols: 2
-        #    rows: 4
-        #   Label:
-        #        text: "Enrolamento R Motor"
-        #        font_size: 16
-        #    Label:
-        #        id: temp_R
-        #        text: "-.- °C"
-        #        font_size: 16
-        #    Label:
-        #        text: "Enrolamento S Motor"
-        #        font_size: 16
-        #     Label:
-        #         id: temp_S
-        #         text: "-.- °C"
-        #         font_size: 16
-        #     Label:
-        #         text: "Enrolamento T Motor"
-        #         font_size: 16
-        #     Label:
-        #         id: temp_T
-        #         text: "-.- °C"
-        #         font_size: 16
-        #     Label:
-        #         text: "Carcaça"
-        #         font_size: 16
-        #     Label:
-        #         id: temp_C
-        #         text: "-.- °C"
-        #         font_size: 16
-        
-
+# JANELA DE MEDIDAS DO MOTOR
 <MedidasPopup>:
     title: "MEDIDAS ELÉTRICAS"
     bold: True
@@ -932,54 +788,8 @@
 
             Widget:
 
-# <BancoDadosPopup>:
-<historicoPopup>:
-    title: "BANCO DE DADOS"
-    bold: True
-    background_color: 0, 0, 0, 0
-    size_hint: None, None
-    width: 650
-    height: 550
 
-    BoxLayout:
-        orientation: 'vertical'
-        padding: 10
-        spacing: 10
-
-        canvas.before:
-            Color:
-                rgba: 0.788, 0.780, 0.780, 1
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        Label:
-            text: "Colocar histórico de dados aqui!!"
-            font_size: 18
-            bold: True
-            color: 0, 0, 0, 1
-            size_hint_x: 1
-            halign: 'center'
-            valign: 'middle'
-            text_size: self.size
-
-        # ================= BOTÃO FECHAR (MANTIDO) =================
-        BoxLayout:
-            size_hint_y: None
-            height: 60
-
-            Widget:
-
-            RoundedButton:
-                text: "Fechar"
-                size_hint: None, None
-                size: self.texture_size[0] + 40, 45
-                pos_hint: {"center_x": 0.5}
-                on_release: root.dismiss()
-
-            Widget:
-
-
-# =================== GRÁFICO ================#
+# JANELA DOS GRÁFICOS DO MOTOR
 <GraficoPopup>:
     title: "Gráfico"
     BoxLayout:
