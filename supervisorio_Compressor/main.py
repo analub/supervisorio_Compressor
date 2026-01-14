@@ -17,7 +17,7 @@ class MainApp(App):
         """
         # Passamos o IP e a Porta do servidor como argumentos.
         # Isso permite que o MainWidget já inicie configurado para o localhost (127.0.0.1).
-        self._widget = MainWidget(scan_time=1000, server_ip='127.0.0.1', server_port=502, modbus_addrs = {
+        self._widget = MainWidget(scan_time=1000, server_ip='10.15.30.182', server_port=502, modbus_addrs = {
             # --- DADOS PRINCIPAIS ---
             'vel_motor': 884,         # Velocidade do motor
             'torque_motor': 1420,           # Torque
