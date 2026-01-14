@@ -77,4 +77,4 @@ class MainApp(App):
     
 if __name__ == "__main__":
     #Builder.load_string(open("mainwidget.kv", encoding="utf-8").read(), rulesonly=True)
-    MainApp().run() # Inicia a execução do aplicativo
+    MainApp().run() 

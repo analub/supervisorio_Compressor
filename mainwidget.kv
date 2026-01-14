@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-<MainWidget>:                   #classe principal
+<MainWidget>:                   
     orientation: 'vertical'
     canvas:
         Color:
@@ -23,6 +23,16 @@
             keep_ratio: False
             size_hint: 1, 1
             pos_hint: {'x': 0, 'y': 0}
+
+        # BOTÃO CONFIGURAÇÕES (TRANSPARENTE)
+        Button:
+            id: bt_config
+            size_hint: 0.05, 0.08
+            pos_hint: {'right': 0.93, 'top': 0.99}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._modbusPopup.open()  #abre o popup de configuração modbus
 
         ## LABELS DE DADOS ##
         LabelMedidas:
@@ -48,23 +58,23 @@
         ## LABELS DE VALVULAS ##
         LabelValvula:
             id: XV_2
-            pos_hint: {'center_x': 0.934, 'center_y': 0.74}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.685}
 
         LabelValvula:
             id: XV_3
-            pos_hint: {'center_x': 0.934, 'center_y': 0.635}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.582}
 
         LabelValvula:
             id: XV_4
-            pos_hint: {'center_x': 0.934, 'center_y': 0.525}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.47}
 
         LabelValvula:
             id: XV_5
-            pos_hint: {'center_x': 0.934, 'center_y': 0.415}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.36}
 
         LabelValvula:
             id: XV_6
-            pos_hint: {'center_x': 0.934, 'center_y': 0.305}
+            pos_hint: {'center_x': 0.95, 'center_y': 0.254}
 
         # BOTÕES VALVULAS
         RoundedButton:
@@ -82,21 +92,22 @@
         RoundedButton:
             text: "ABRE"
             pos_hint: {'center_x': 0.805, 'y': 0.27}     
-        # =======================
+        
         # BOTÕES INFERIORES -> OBS: conferir tamanho da fonte nos botões
-        # =======================
-
         RoundedButton:
             text: "MEDIÇÕES"
             pos_hint: {'center_x': 0.35, 'y': 0.02}
+            on_release: root._medidasPopup.open()   #abre o popup de medidas
 
         RoundedButton:
             text: "GRÁFICOS"
             pos_hint: {'center_x': 0.50, 'y': 0.02}
+            on_release: root._graficoPopup.open()   #abre o popup de gráficos
 
         RoundedButton:
             text: "BD"
             pos_hint: {'center_x': 0.65, 'y': 0.02}
+            on_release: root._bancoDadosPopup.open()   #abre o popup de banco de dados
         
         RoundedButton:
             text: "LIGA"
@@ -105,10 +116,12 @@
         RoundedButton:
             text: "COMANDO"
             pos_hint: {'center_x': 0.2, 'y': 0.24}
+            on_release: root._comandoPopup.open()   #abre o popup de comando de partida
 
         RoundedButton:
             text: "TEMPERATURA"
             pos_hint: {'center_x': 0.44, 'y': 0.24}
+            on_release: root._temperaturaPopup.open()   #abre o popup de temperatura
 
         Widget:
             size_hint_y: 0.01

@@ -1,52 +1,95 @@
 #:kivy 2.1.0
 
+# ====== JANELA DE CONFIGURAÇÕES ==========#
 <ModBusPopup>:
-    title: "Configuração ModBus"
-    size_hint_y: None
-    size_hint_x: 0.3
-    height: 250
+    title: "CONFIGURAÇÕES MODBUS"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    height: 300
+    width: 400      
 
     BoxLayout:
         id: layout # ID fundamental para o Python (popups.py) conseguir inserir a Label de erro aqui
         orientation: 'vertical'
-        GridLayout:
+        padding: 15
+        spacing: 10
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1            #cor cinza igual da planta base
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # CAMPOS IP E PORTA
+        GridLayout:                                     #Grid para IP e Porta
             cols: 2
             rows: 2
+            size_hint_y: None
+            height: 110
+            spacing: 10
+
             Label:
                 text: "IP"
-                font_size: 14
+                bold: True
+                color: 0, 0, 0, 1
+                font_size: 18
+
             TextInput:
-                id: txt_ip # ID usado pelo Python para ler o IP digitado
-                text: "127.0.0.1"
-                font_size: 14
+                id: txt_ip
+                text: "10.15.30.182"
+                font_size: 18
+                color: 0, 0, 0, 1
                 halign: 'center'
                 valign: 'middle'
+                background_normal: ''
+                background_active: ''
+                background_color: 0.788, 0.780, 0.780, 1
+
             Label:
                 text: "Porta"
-                font_size: 14
+                bold: True
+                color: 0, 0, 0, 1
+                font_size: 18
+
             TextInput:
                 id: txt_port # ID usado pelo Python para ler a porta digitada
                 text: "502"
-                font_size: 14
+                font_size: 18
+                color: 0, 0, 0, 1
                 halign: 'center'
                 valign: 'middle'
+                background_normal: ''
+                background_active: ''
+                background_color: 0.788, 0.780, 0.780, 1
+
+        # BOTÕES CONECTAR E FECHAR -> Usam formato arredondado (widgets_auxiliares)
         BoxLayout:
             orientation: 'horizontal'
-            Button:
+            size_hint_y: None
+            height: 60
+            spacing: 20
+
+            Widget:
+
+            RoundedButton:
                 text: "Conectar"
-                size_hint_y: None
-                height: 40
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
                 on_release:
                     root.clearInfo() # Limpa avisos de erros de tentativas anteriores
                     # Chama a função de conexão no widget principal passando os valores dos inputs
                     app.root.startDataRead(txt_ip.text, int(txt_porta.text))
-            Button:
+
+            RoundedButton:
                 text: "Fechar"
-                size_hint_y: None
-                height: 40
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
                 on_release: 
                     root.dismiss() # Fecha a janela do popup
                     root.clearInfo() # Limpa a mensagem de erro ao sair
+
+            Widget:
         
 <ScanPopup>:
     title: "Configuração ScanTime"
@@ -83,4 +126,804 @@
                 height: 40
                 on_release: 
                     root.dismiss() #fecha a janela e volta pra raiz
+
+# JANELA DE COMANDOS DO MOTOR
+<ComandoPopup>:
+    title: "COMANDOS DE PARTIDA DO MOTOR"
+    size_hint: None, None
+    width: 970
+    height: 500
+    background_color: 0, 0, 0, 0
+
+    BoxLayout:                          #BoxLayout Pai
+        orientation: 'vertical'
+        size_hint: 1, 1
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, 0.8
+            canvas.before:
+                Color:
+                    rgba: 0.788, 0.780, 0.780, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            # PRIMEIRA COLUNA: TIPOS DE PARTIDA
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.3
+                padding: 15
+                spacing: 15
+
+                Label:
+                    text: "SELECIONE TIPO\nDA PARTIDA"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    halign: 'center'
+                    valign: 'middle'
+                    text_size: self.size
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 12
+                    size_hint_y: 0.8
+                    RoundedButton:
+                        text: "TESYS DIRETA"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("tesysDireta")
+                        size_hint_x: 1
+
+                    RoundedButton:
+                        text: "ATV31 INVERSOR"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("atv31")
+                        size_hint_x: 1
+
+                    RoundedButton:
+                        text: "ATS48 SOFT-START"
+                        bold: False
+                        pos_hint: {"center_x": 0.5}
+                        on_release: root.trocar_tela("ats48")
+                        size_hint_x: 1
+
+            # SEGUNDA COLUNA: CONFIGURÇÃO DO TIPO DE PARTIDA
+            BoxLayout:
+                size_hint_x: 0.3
+                padding: 10
+
+                ScreenManager:
+                    id: sm
+                    #current: "vazia"    
+
+                    TesysDiretaScreen:
+                        name: "tesysDireta"
+
+                    ATS48Screen:
+                        name: "ats48"
+
+                    ATV31Screen:
+                        name: "atv31"
+
+                    VaziaScreen:
+                        name: "vazia"               # screen vazia enquanto não seleciona nada
+
+
+            # TERCEIRA COLUNA: RELIGAMENTO
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.30
+                padding: 15
+                spacing: 10
+
+                canvas.before:
+                    Color:
+                        rgba: 0.788, 0.780, 0.780, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+                Label:
+                    text: "RELIGAMENTO"
+                    color: 0, 0, 0, 1
+                    halign: 'center'
+                    valign: 'middle'
+                    bold: True
+                    font_size: 18
+
+                # Modo: Manual / Automatico
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 5
+                    # size_hint_y: 0.3
+
+                    Label:
+                        text: "Modo:"
+                        color: 0, 0, 0, 1
+                        font_size: 18
+                        bold: True
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        Label:
+                            text: "Manual"
+                            text_size: self.size
+                            halign: 'left'
+                            valign: 'middle'
+                            color: 0, 0, 0, 1
+                        GrayCheckBox:
+                            group: "relig"
+                            active: True
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        Label:
+                            text: "Automático"
+                            text_size: self.size
+                            halign: 'left'
+                            valign: 'middle'
+                            color: 0, 0, 0, 1
+                        GrayCheckBox:
+                            group: "relig"      
+
+                BoxLayout:                          #Pressão Máxima e Minima
+                    orientation: 'vertical'
+                    spacing: 5
+                    size_hint_y: 0.7
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 5
+                        Label:
+                            text: "Mínima (kgf/cm²)"
+                            color: 0, 0, 0, 1
+                            bold: True
+                            font_size: 18
+
+                        TextInput:
+                            text: "0.0"
+                            color: 0, 0, 0, 1
+                            multiline: False
+                            input_filter: 'float'
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 5
+                        # size_hint_y: 0.5
+                            
+                        Label:
+                            text: "Máxima (kgf/cm²)"
+                            color: 0, 0, 0, 1
+                            bold: True
+                            font_size: 18
+
+                        TextInput:
+                            text: "5.0"
+                            color: 0, 0, 0, 1
+                            multiline: False
+                            input_filter: 'float'
+
+        BoxLayout:                    # Para ajuste do botão
+            size_hint: 1, 0.2
+            padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
+            canvas.before:
+                Color:
+                    rgba: 0.788, 0.780, 0.780, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
         
+# SOFT-START SCREEN
+<ATS48Screen@Screen>:     
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "ATS48 - Soft Starter"
+            size_hint:1, 0.2
+            bold: True
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+        Label:
+            text: "Digite os parâmetros de\naceleração e desaceleração:"
+            size_hint:1, 0.1
+            bold: False
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+        Label:
+            text: "MIN:10s e MAX:60s"
+            size_hint:1, 0.1
+            bold: True
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 16
+
+        GridLayout:
+            cols: 2
+            spacing: 10
+            size_hint:1, 0.6
+
+            Label:
+                text: "ACC"
+                color: 0, 0, 0, 1
+            TextInput:
+                text: "10"
+                color: 0, 0, 0, 1
+                multiline: False
+
+            Label:
+                text: "DCC"
+                color: 0, 0, 0, 1
+            TextInput:
+                text: "10"
+                color: 0, 0, 0, 1
+                multiline: False
+
+# TELA VAZIA SCREEN
+<VaziaScreen@Screen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "CONFIGURAÇÃO DO \nTIPO DE PARTIDA"
+            color: 0, 0, 0, 1
+            bold: True
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+            text_size: self.size
+        Label:
+            text: "Nenhum tipo de \n  partida selecionado"
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            text_size: self.size
+            font_size: 16
+
+# TESYS DIRETA SCREEN
+<TesysDiretaScreen@Screen>:
+    BoxLayout:
+        Label:
+            text: "TESYS Direta \nselecionada"
+            color: 0, 0, 0, 1
+            halign: 'center'
+            valign: 'middle'
+            font_size: 18
+
+# ATV31 SCREEN
+<ATV31Screen@Screen>:
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 15
+        padding: 20
+
+        Label:
+            text: "ATV31 - Inversor"
+            color: 0, 0, 0, 1
+            bold: True
+            font_size: 18
+
+        Label:
+            text: "Velocidade (Hz)"
+            color: 0, 0, 0, 1
+
+        Slider:
+            id: vel_slider
+            min: 0
+            max: 60
+            value: 0
+
+        Label:
+            text: f"{int(vel_slider.value)} Hz"
+            color: 0, 0, 0, 1
+
+# JANELA DE TEMPERATURA DO MOTOR
+<TemperaturaPopup>:
+    title: "TEMPERATURAS DO MOTOR"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    width: 400      
+    height: 250
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Widget:   # espaçador superior
+
+        # ================= TEMPERATURA CARCAÇA =================
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: 40
+
+            Label:
+                text: "Carcaça"
+                bold: True
+                font_size: 18
+                color: 0, 0, 0, 1
+                size_hint_x: 0.5
+                halign: 'right'
+                valign: 'middle'
+                text_size: self.size
+
+            Widget:
+
+            Label:
+                id: temp_C
+                text: "-.- °C"
+                font_size: 18
+                color: 0, 0, 0, 1
+                size_hint_x: 0.5
+                halign: 'left'
+                valign: 'middle'
+                text_size: self.size
+
+        Widget:   # espaçador entre texto e botão
+
+        # BOTÃO FECHAR
+        BoxLayout:
+            size_hint_y: None
+            height: 45
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 40
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
+        Widget:   # espaçador inferior
+
+
+# JANELA DE MEDIDAS DO MOTOR
+<MedidasPopup>:
+    title: "MEDIDAS ELÉTRICAS"
+    bold: True
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    width: 650
+    height: 550
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # ================= GRID PRINCIPAL =================
+        GridLayout:
+            cols: 2
+            rows: 2
+            spacing: 3
+
+            # ================= TENSÃO =================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Tensão"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label:
+                        text: "R–S"
+                        color: 0, 0, 0, 1
+                    LabelTHD:
+                        id: thd_tensao_rn
+
+                    Label:
+                        text: "S–T"
+                        color: 0, 0, 0, 1
+                    LabelTHD:
+                        id: thd_tensao_sn
+
+                    Label:
+                        text: "T–R"
+                        color: 0, 0, 0, 1
+                    LabelTHD:
+                        id: thd_tensao_tn
+
+            # ================= CORRENTE =================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Corrente"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label:
+                        text: "Fase R"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente:
+                        id: corrente_r
+
+                    Label:
+                        text: "Fase S"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente:
+                        id: corrente_s
+
+                    Label:
+                        text: "Fase T"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente:
+                        id: corrente_t
+
+                    Label:
+                        text: "Neutro"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente:
+                        id: corrente_n
+
+                    Label:
+                        text: "Média"
+                        color: 0, 0, 0, 1
+                    LabelValorCorrente:
+                        id: corrente_media
+
+            # ================= DEMANDA =================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Demanda"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
+
+                GridLayout:
+                    cols: 2
+                    row_default_height: 30
+                    row_force_default: True
+
+                    Label:
+                        text: "Anterior"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda:
+                        id: demanda_anterior
+
+                    Label:
+                        text: "Atual"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda:
+                        id: demanda_atual
+
+                    Label:
+                        text: "Média"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda:
+                        id: demanda_media
+
+                    Label:
+                        text: "Prevista"
+                        color: 0, 0, 0, 1
+                    LabelValorDemanda:
+                        id: demanda_prevista
+
+            # ================= POTÊNCIA =================
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 5
+
+                Label:
+                    text: "Potência"
+                    bold: True
+                    color: 0, 0, 0, 1
+                    font_size: 18
+                    size_hint_y: None
+                    height: 30
+                    canvas.after:
+                        Color:
+                            rgba: 0, 0, 0, 0.6
+                        Line:
+                            points: self.x, self.y, self.right, self.y
+                            width: 1.2
+
+                GridLayout:
+                    cols: 2
+                    spacing: 10
+
+                    # -------- ATIVA --------
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+
+                        Label:
+                            text: "Ativa"
+                            bold: True
+                            color: 0, 0, 0, 1
+                            size_hint_y: None
+                            height: 25
+                            canvas.after:
+                                Color:
+                                    rgba: 0, 0, 0, 0.6
+                                Line:
+                                    points: self.x, self.y, self.right, self.y
+                                    width: 1.2
+
+                        GridLayout:
+                            cols: 2
+                            row_default_height: 30
+                            row_force_default: True
+
+                            Label:
+                                text: "R"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_r
+
+                            Label:
+                                text: "S"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_s
+
+                            Label:
+                                text: "T"
+                                color: 0, 0, 0, 1
+                            LabelValorPotAtiva:
+                                id: ativa_t
+
+                    # -------- OUTRAS --------
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+
+                        Label:
+                            text: "Reativa"
+                            bold: True
+                            color: 0, 0, 0, 1
+                        Label:
+                            id: reativa_total
+                            text: "-.- var"
+                            color: 0, 0, 0, 1
+
+                        Label:
+                            text: "Aparente"
+                            bold: True
+                            color: 0, 0, 0, 1
+                        Label:
+                            id: aparente_total
+                            text: "-.- VA"
+                            color: 0, 0, 0, 1
+
+                        Label:
+                            text: "FP"
+                            bold: True
+                            color: 0, 0, 0, 1
+                        Label:
+                            id: fator_potencia
+                            text: "-.-"
+                            color: 0, 0, 0, 1
+
+        # ================= BOTÃO FECHAR =================
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+
+            Widget:
+
+            RoundedButton:
+                text: "Fechar"
+                size_hint: None, None
+                size: self.texture_size[0] + 40, 45
+                pos_hint: {"center_x": 0.5}
+                on_release: root.dismiss()
+
+            Widget:
+
+
+# JANELA DOS GRÁFICOS DO MOTOR
+<GraficoPopup>:
+    title: "Gráfico"
+    BoxLayout:
+        orientation:'vertical'
+        TimeSeriesGraph:
+            id: graph
+            xlabel: 'Horario'
+            ylabel: 'Amplitude'
+            background_color: 0.5,0.5,0.5,0.5
+            x_ticks_minor: 1        #subdivisões do eixo horizontal
+            x_ticks_major: 5        #grid
+            y_ticks_major: 5 
+            y_grid_label: True
+            x_grid_label: True
+            padding: 5              #espaçamento entre os labels
+            x_grid: True
+            y_grid: True 
+            xmin: 0
+            ymin: 0
+            ymax: 100
+        BoxLayout:
+            orientation:'horizontal'
+            size_hint:(1,0.05)
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.5,1)
+                Label:
+                    size_hint: (0.3,1) 
+                    text:'Número de pontos do gráfico'
+                LabeledCheckBoxDataGraph:
+                    id: mp20
+                    on_kv_post:
+                        self.ids.label.text = '20' 
+                        self.ids.checkbox.group = 'cd_group' 
+                        self.ids.checkbox.active = True 
+                LabeledCheckBoxDataGraph:
+                    id: mp50
+                    on_kv_post:
+                        self.ids.label.text = '50' 
+                        self.ids.checkbox.group = 'cd_group'
+                LabeledCheckBoxDataGraph:
+                    id: mp100
+                    on_kv_post:
+                        self.ids.label.text = '100' 
+                        self.ids.checkbox.group = 'cd_group'
+            Button:
+                text: 'Fechar'  
+                size_hint: (0.2,1)
+                on_release: root.dismiss() 
+
+<LabeledCheckBoxDataGraph>:
+    orientation: 'horizontal'
+    size_hint: (0.1,1)
+    CheckBox:
+        id: checkbox
+        on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
+    Label:
+        id: label 
+
+
+# =================== HISTORICO ================#
+<BancoDadosPopup>:
+    title: "Histórico do Banco de Dados"
+    BoxLayout:
+        orientation: 'vertical'
+        TimeSeriesGraph:
+            id: graph
+            xlabel: 'Horario'
+            ylabel: 'Medicoes'
+            background_color: 0.5, 0.5, 0.5, 0.5
+            x_ticks_minor: 1
+            x_ticks_major: 5
+            y_ticks_major: 100
+            y_grid_label: True
+            x_grid_label: True
+            padding: 5
+            x_grid: True
+            y_grid: True
+            xmin: 0
+            ymin: 0
+            ymax: 500
+        BoxLayout:
+            id: sensores
+            orientation: 'horizontal'
+            size_hint: (1, 0.1)
+            Spinner:
+                id: dropdown
+                text: "Selecione"
+                values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
+                on_text: app.root.muda_graph(self.text)
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.1)
+            Label:
+                text: 'Timestamp inicial \r\n [size=12] (DD/MM/AAAA HH:MM:SS) [/size]'
+                halign: 'center'
+                markup: True
+            TextInput:
+                id: txt_init_time
+                size_hint: (1, 0.8)
+                halign: 'center'
+                valign: 'middle'
+                multiline: False
+            Label:
+                text: 'Timestamp final \r\n [size=12] (DD/MM/AAAA HH:MM:SS) [/size]'
+                halign: 'center'
+                markup: True
+            TextInput:
+                id: txt_final_time
+                size_hint: (1, 0.8)
+                halign: 'center'
+                valign: 'middle'
+                multiline: False
+            Button:
+                text: 'Fechar'
+                size_hint: (1, 0.8)
+                on_release: root.dismiss()
+
+<LabeledCheckBoxHistGraph>:
+    orientation: 'vertical'
+    size_hint: (0.2, 1)
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: (0.2, 1)
+        Spinner:
+            id: dropdown
+            text: "Selecione"
+            values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "temp_r", "temp_s", "temp_t", "temp_carc", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
+            on_text: app.root.muda_graph(self.text)
+

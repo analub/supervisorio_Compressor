@@ -1,5 +1,11 @@
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label # Importa a classe Label para criar mensagens de texto dinâmicas dentro do popup
+from kivy.uix.modalview import ModalView
+from kivy.uix.screenmanager import Screen
+from kivy.uix.label import Label
+from kivy_garden.graph import LinePlot
+from kivy.uix.boxlayout import BoxLayout
+
+# Aqui serão colocados os popups do supervisório
 
 class ModbusPopup(Popup):
     """
@@ -40,3 +46,90 @@ class ScanPopup(Popup):
         super().__init__(**kwargs)
         # Inicializa o campo de texto com o valor atual do tempo de varredura
         self.ids.txt_st.text = str(scantime)
+
+class ComandoPopup(Popup):
+    """
+        Popup para enviar comandos de partida ao sistema
+    """
+    def trocar_tela(self, nome_tela):
+        """
+        Troca a subtela de configuração conforme o tipo de partida
+        """
+        self.ids.sm.current = nome_tela
+    def on_open(self):
+        # garante que todas as screens já foram carregadas
+        self.ids.sm.current = "vazia"
+
+
+# =====================================
+# SCREENS DO COMANDO DE PARTIDA
+# =====================================
+
+class VaziaScreen(Screen):
+    """
+    Tela inicial (nenhuma partida selecionada)
+    """
+    pass
+
+class TesysDiretaScreen(Screen):
+    """
+    Tela de configuração do motor Tesys Direta
+    """
+    pass
+
+
+class ATS48Screen(Screen):
+    """
+    Tela de configuração do Soft-Starter ATS48
+    """
+    pass
+
+
+class ATV31Screen(Screen):
+    """
+    Tela de configuração do Inversor ATV31
+    """
+    pass
+
+class TemperaturaPopup(Popup):
+    """
+        Popup para exibir informações de temperatura
+    """
+    pass
+
+class MedidasPopup(Popup):
+    """
+        Popup para exibir informações de medidas
+    """
+    pass
+
+class GraficoPopup(Popup):
+    """
+        Popup para exibir gráficos
+    """
+    # def __init__(self, xmax,plot_color, **kwargs):
+    #     super().__init__(**kwargs)
+    #     self.plot = LinePlot(line_width=1.5, color=plot_color) #linha que será plotada no gráfico de temperatura, o gráfico é só o fundo
+    #     self.ids.graph.add_plot(self.plot)
+    #     self.ids.graph.xmax = xmax
+    pass
+
+class BancoDadosPopup(Popup):
+    """
+        Popup para exibir informações do banco de dados
+    """
+    pass
+
+class historicoPopup(Popup):
+    """
+        Popup para exibir hisotorico do banco de dados
+    """
+    def __init__(self,**kwargs):
+        super().__init__()
+    
+
+class LabeledCheckBoxDataGraph(BoxLayout):
+    pass
+
+class LabeledCheckBoxDataGraph(BoxLayout):  
+    pass

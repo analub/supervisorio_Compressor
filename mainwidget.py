@@ -1,5 +1,6 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup, ScanPopup
+from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, GraficoPopup, BancoDadosPopup
+from timeseriesgraph import TimeSeriesGraph
 from pyModbusTCP.client import ModbusClient # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
 from kivy.core.window import Window # Permite controlar propriedades da janela, como o cursor do mouse
 from threading import Thread # Permite rodar funções em segundo plano sem travar a interface
@@ -22,6 +23,12 @@ class MainWidget(BoxLayout):
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
+        
+        self._comandoPopup = ComandoPopup()
+        self._medidasPopup = MedidasPopup()
+        self._temperaturaPopup = TemperaturaPopup()
+        self._graficoPopup = GraficoPopup()
+        self._bancoDadosPopup = BancoDadosPopup()        
         self._serverIP = kwargs.get('server_ip')
         self._serverPort = kwargs.get('server_port')
 
