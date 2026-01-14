@@ -1,5 +1,6 @@
 from kivy.uix.boxlayout import BoxLayout
 from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, GraficoPopup, BancoDadosPopup
+from timeseriesgraph import TimeSeriesGraph
 
 class MainWidget(BoxLayout):
     """
