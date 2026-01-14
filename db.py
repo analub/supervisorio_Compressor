@@ -12,3 +12,6 @@ engine = create_engine(DB_CONNECTION, echo=False)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
+def create_database():
+    Base.metadata.create_all(engine)
+
