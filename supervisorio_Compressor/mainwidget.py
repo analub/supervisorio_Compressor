@@ -56,14 +56,14 @@ class MainWidget(BoxLayout):
             'dem_anterior': {'type': 'int', 'div': 10},
             'dem_atual': {'type': 'int', 'div': 10},
             'dem_media': {'type': 'int', 'div': 10},
-            'dem_prevista': {'type': 'int', 'div': 10},
+            'dem_prevista': {'type': 'int', 'div': 10}
 
-            # Válvulas e seus respectivos bits (conforme a tabela do CLP)
-            'XV_2': {'type': 'bit', 'bit': 1},
-            'XV_3': {'type': 'bit', 'bit': 2},
-            'XV_4': {'type': 'bit', 'bit': 3},
-            'XV_5': {'type': 'bit', 'bit': 4},
-            'XV_6': {'type': 'bit', 'bit': 5}
+            # # Válvulas e seus respectivos bits (conforme a tabela do CLP)
+            # 'XV_2': {'type': 'bit', 'bit': 1},
+            # 'XV_3': {'type': 'bit', 'bit': 2},
+            # 'XV_4': {'type': 'bit', 'bit': 3},
+            # 'XV_5': {'type': 'bit', 'bit': 4},
+            # 'XV_6': {'type': 'bit', 'bit': 5}
             
             # As demais potências são Divisor 1 (valor direto)
         }
@@ -124,45 +124,45 @@ class MainWidget(BoxLayout):
         packed = struct.pack('>HH', *registers)
         return struct.unpack('>f', packed)[0]
     
-    def sendCommand(self, key, value):
-        """
-        Envia um comando de escrita para o servidor Modbus.
-        key: ID da tag (ex: 'XV_2')
-        value: 0 para Abrir, 1 para Fechar
-        """
-        try:
-            if not self._modbusClient.is_open():
-                print("Erro: Cliente Modbus desconectado.")
-                return
+    # def sendCommand(self, key, value):
+    #     """
+    #     Envia um comando de escrita para o servidor Modbus.
+    #     key: ID da tag (ex: 'XV_2')
+    #     value: 0 para Abrir, 1 para Fechar
+    #     """
+    #     try:
+    #         if not self._modbusClient.is_open():
+    #             print("Erro: Cliente Modbus desconectado.")
+    #             return
 
-            tag = self._tags.get(key)
-            if tag and tag['type'] == 'bit':
-                # --- Lógica de Escrita em Bit (Read-Modify-Write) ---
-                # 1. Lê o valor atual do registrador (16 bits)
-                current_value = self._modbusClient.read_holding_registers(tag['addr'], 1)
+    #         tag = self._tags.get(key)
+    #         if tag and tag['type'] == 'bit':
+    #             # --- Lógica de Escrita em Bit (Read-Modify-Write) ---
+    #             # 1. Lê o valor atual do registrador (16 bits)
+    #             current_value = self._modbusClient.read_holding_registers(tag['addr'], 1)
                 
-                if current_value:
-                    new_val = current_value[0]
-                    bit_pos = tag['bit']
+    #             if current_value:
+    #                 new_val = current_value[0]
+    #                 bit_pos = tag['bit']
                     
-                    if value == 1: # Fechar (Setar bit para 1)
-                        new_val |= (1 << bit_pos)
-                    else:          # Abrir (Zerar bit para 0)
-                        new_val &= ~(1 << bit_pos)
+    #                 if value == 1: # Fechar (Setar bit para 1)
+    #                     new_val |= (1 << bit_pos)
+    #                 else:          # Abrir (Zerar bit para 0)
+    #                     new_val &= ~(1 << bit_pos)
                     
-                    # 2. Escreve o novo valor inteiro de volta no endereço
-                    success = self._modbusClient.write_single_register(tag['addr'], new_val)
-                    if success:
-                        print(f"Comando enviado com sucesso para {key}: {value}")
-                    else:
-                        print(f"Falha ao enviar comando para {key}")
+    #                 # 2. Escreve o novo valor inteiro de volta no endereço
+    #                 success = self._modbusClient.write_single_register(tag['addr'], new_val)
+    #                 if success:
+    #                     print(f"Comando enviado com sucesso para {key}: {value}")
+    #                 else:
+    #                     print(f"Falha ao enviar comando para {key}")
 
-            elif tag and tag['type'] == 'int':
-                # Escrita simples para inteiros (ex: Setpoint)
-                self._modbusClient.write_single_register(tag['addr'], int(value * tag['div']))
+    #         elif tag and tag['type'] == 'int':
+    #             # Escrita simples para inteiros (ex: Setpoint)
+    #             self._modbusClient.write_single_register(tag['addr'], int(value * tag['div']))
 
-        except Exception as e:
-            print(f"Erro ao enviar comando: {e.args}")
+    #     except Exception as e:
+    #         print(f"Erro ao enviar comando: {e.args}")
 
     def startDataRead(self, ip, port):
         """
