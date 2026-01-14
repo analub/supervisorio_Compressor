@@ -38,10 +38,10 @@ def db_writer(self):
             row = CompData(
                 timestamp=data['timestamp'],
                 **{k: values.get(k) for k in values}
-            )
+            ) #transforma a leitura para inserção no BD
 
             with self._db_lock:
-                session.add(row)
+                session.add(row) #inserção segura no BD, evitando 2 commits simultâneos
                 session.commit()
 
         except Exception as e:
