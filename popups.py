@@ -55,10 +55,10 @@ class ComandoPopup(Popup):
         """
         Troca a subtela de configuração conforme o tipo de partida
         """
-        self.ids.sm.current = nome_tela
+        self.ids.screenTipoPartida.current = nome_tela
     def on_open(self):
         # garante que todas as screens já foram carregadas
-        self.ids.sm.current = "vazia"
+        self.ids.screenTipoPartida.current = "vazia"
 
 
 # =====================================
@@ -128,8 +128,5 @@ class historicoPopup(Popup):
         super().__init__()
     
 
-class LabeledCheckBoxDataGraph(BoxLayout):
-    pass
-
-class LabeledCheckBoxDataGraph(BoxLayout):  
+class LabelCheckBoxGrafico(BoxLayout):
     pass

@@ -7,11 +7,21 @@ from threading import Thread # Permite rodar funções em segundo plano sem trav
 from time import sleep # Utilizado para criar intervalos de tempo entre as leituras
 from datetime import datetime
 import struct
+from kivy.properties import BooleanProperty
+from kivy.properties import ListProperty
+from kivy.uix.floatlayout import FloatLayout
+
 
 class MainWidget(BoxLayout):
     """
     Widget principal do aplicativo
     """
+    # Estado inicial das imagens (motor e conexão -> planta desligada)
+    motor_ligado = BooleanProperty(False)
+     # False = fechada | True = aberta
+    valvulas = ListProperty([False, False, False, False, False])
+    conectado = BooleanProperty(False)
+
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
     _updateWidgets = True # Flag (bandeira) para controlar quando o loop de leitura deve rodar ou parar
@@ -105,14 +115,17 @@ class MainWidget(BoxLayout):
             Window.set_system_cursor("arrow") # Volta o cursor ao normal
             if self._modbusClient.is_open:
                 # Inicia a Thread para que a interface não trave durante o loop de leitura
+                self.conectado = True  #conexao ok -> aparece imagem na tela
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
                 # Atualiza a interface indicando sucesso
                 self.ids.img_con.source = 'imgs/conectado.png'
                 self._modbusPopup.dismiss()
             else:
+                self.conectado = False          #erro de conexão -> aparece imagem vermelha
                 self._modbusPopup.setInfo("Falha na conexão com o servidor.")
         except Exception as e:
+            self.conectado = False              #erro -> imagem vermelha  
             print("Erro: ", e.args)
 
     def updater(self):
@@ -186,3 +199,15 @@ class MainWidget(BoxLayout):
         """
         self._updateWidgets = False
 
+    def toggle_motor(self):
+        """
+        Método que muda o estado do motor. Usado para mudar a imagem da planta
+        """
+        self.motor_ligado = not self.motor_ligado
+
+    def toggle_valvula(self, idx):
+        
+        estados = self.valvulas[:]
+        estados[idx] = not estados[idx]
+        self.valvulas = estados
+        

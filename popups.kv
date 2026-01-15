@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-# ====== JANELA DE CONFIGURAÇÕES ==========#
+# ====== JANELA DE CONFIGURAÇÕES DE CONEXÃO ========== #
 <ModBusPopup>:
     title: "CONFIGURAÇÕES MODBUS"
     bold: True
@@ -9,8 +9,9 @@
     height: 300
     width: 400      
 
+    #BoxLayout Pai
     BoxLayout:
-        id: layout # ID fundamental para o Python (popups.py) conseguir inserir a Label de erro aqui
+        id: configModBus                        # ID fundamental para popups.py conseguir inserir a Label de erro aqui
         orientation: 'vertical'
         padding: 15
         spacing: 10
@@ -22,7 +23,7 @@
                 size: self.size
 
         # CAMPOS IP E PORTA
-        GridLayout:                                     #Grid para IP e Porta
+        GridLayout:                                    
             cols: 2
             rows: 2
             size_hint_y: None
@@ -53,7 +54,7 @@
                 font_size: 18
 
             TextInput:
-                id: txt_port # ID usado pelo Python para ler a porta digitada
+                id: txt_port                    # ID usado pelo Python para ler a porta digitada
                 text: "502"
                 font_size: 18
                 color: 0, 0, 0, 1
@@ -70,7 +71,7 @@
             height: 60
             spacing: 20
 
-            Widget:
+            Widget:                 #espaçador
 
             RoundedButton:
                 text: "Conectar"
@@ -89,7 +90,7 @@
                     root.dismiss() # Fecha a janela do popup
                     root.clearInfo() # Limpa a mensagem de erro ao sair
 
-            Widget:
+            Widget:             #espaçador
         
 <ScanPopup>:
     title: "Configuração ScanTime"
@@ -127,7 +128,8 @@
                 on_release: 
                     root.dismiss() #fecha a janela e volta pra raiz
 
-# JANELA DE COMANDOS DO MOTOR
+
+# ====== JANELA DE COMANDOS DO MOTOR ========== #
 <ComandoPopup>:
     title: "COMANDOS DE PARTIDA DO MOTOR"
     size_hint: None, None
@@ -139,7 +141,7 @@
         orientation: 'vertical'
         size_hint: 1, 1
 
-        BoxLayout:
+        BoxLayout:                      #BoxLayout com as colunas
             orientation: 'horizontal'
             size_hint: 1, 0.8
             canvas.before:
@@ -195,7 +197,7 @@
                 padding: 10
 
                 ScreenManager:
-                    id: sm
+                    id: screenTipoPartida
                     #current: "vazia"    
 
                     TesysDiretaScreen:
@@ -304,6 +306,7 @@
                             multiline: False
                             input_filter: 'float'
 
+        # BOTÃO FECHAR 
         BoxLayout:                    # Para ajuste do botão
             size_hint: 1, 0.2
             padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
@@ -314,7 +317,7 @@
                     pos: self.pos
                     size: self.size
 
-            Widget:
+            Widget:             #espaçador
 
             RoundedButton:
                 text: "Fechar"
@@ -323,10 +326,10 @@
                 pos_hint: {"center_x": 0.5}
                 on_release: root.dismiss()
 
-            Widget:
+            Widget:             #espaçador
 
-        
-# SOFT-START SCREEN
+# SCREENS PARA TIPO DE PARTIDA NO MOTOR =================
+# 1) SOFT-START SCREEN
 <ATS48Screen@Screen>:     
     BoxLayout:
         orientation: 'vertical'
@@ -358,7 +361,7 @@
             valign: 'middle'
             font_size: 16
 
-        GridLayout:
+        GridLayout:                 #grifLayout para entrada de ACC/DCC
             cols: 2
             spacing: 10
             size_hint:1, 0.6
@@ -439,7 +442,8 @@
             text: f"{int(vel_slider.value)} Hz"
             color: 0, 0, 0, 1
 
-# JANELA DE TEMPERATURA DO MOTOR
+
+# ====== JANELA DE TEMPERATURA DO MOTOR ========== #
 <TemperaturaPopup>:
     title: "TEMPERATURAS DO MOTOR"
     bold: True
@@ -462,7 +466,7 @@
 
         Widget:   # espaçador superior
 
-        # ================= TEMPERATURA CARCAÇA =================
+        # CARCAÇA 
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -478,7 +482,7 @@
                 valign: 'middle'
                 text_size: self.size
 
-            Widget:
+            Widget:         #espaçador
 
             Label:
                 id: temp_carcaca
@@ -497,7 +501,7 @@
             size_hint_y: None
             height: 45
 
-            Widget:
+            Widget:   #espaçador
 
             RoundedButton:
                 text: "Fechar"
@@ -508,19 +512,19 @@
 
             Widget:
 
-        Widget:   # espaçador inferior
+        Widget:   # espaçador 
 
 
-# JANELA DE MEDIDAS DO MOTOR
+# ====== JANELA DE MEDIDAS ========== #
 <MedidasPopup>:
     title: "MEDIDAS ELÉTRICAS"
     bold: True
     background_color: 0, 0, 0, 0
     size_hint: None, None
     width: 650
-    height: 550
+    height: 600
 
-    BoxLayout:
+    BoxLayout:                          #BoxLayou Pai
         orientation: 'vertical'
         padding: 10
         spacing: 10
@@ -532,13 +536,13 @@
                 pos: self.pos
                 size: self.size
 
-        # ================= GRID PRINCIPAL =================
+        # GRID PRINCIPAL =================
         GridLayout:
             cols: 2
             rows: 2
             spacing: 3
 
-            # ================= TENSÃO =================
+            # TENSÃO 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -580,7 +584,7 @@
                     LabelTHD:
                         id: ddp_tr
 
-            # ================= CORRENTE =================
+            # CORRENTE 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -634,7 +638,7 @@
                     LabelValorCorrente:
                         id: corr_media
 
-            # ================= DEMANDA =================
+            # DEMANDA
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -682,7 +686,7 @@
                     LabelValorDemanda:
                         id: dem_prevista
 
-            # ================= POTÊNCIA =================
+            # POTÊNCIA 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -701,7 +705,7 @@
                             points: self.x, self.y, self.right, self.y
                             width: 1.2
 
-                GridLayout:
+                GridLayout:                 #grid para colocar potencia ativa, reativa e FP
                     cols: 2
                     spacing: 10
 
@@ -747,7 +751,7 @@
                             LabelValorPotAtiva:
                                 id: pot_ativa_t
 
-                    # -------- OUTRAS --------
+                    # -------- Reativa, Aparente e FP --------
                     BoxLayout:
                         orientation: 'vertical'
                         spacing: 5
@@ -778,8 +782,40 @@
                             id: fp_total
                             text: "-.-"
                             color: 0, 0, 0, 1
+        # Frequencia   
+        # BoxLayout:
+        #     size_hint_y: None
+        #     height: 30 
+        #     Label:
+        #         text: "Frequência"
+        #         color: 0, 0, 0, 1
+        #     Label:
+        #         id: freq_rede
+        #         text: "-.- Hz"
+        #         color: 0, 0, 0, 1
 
-        # ================= BOTÃO FECHAR =================
+        # Frequência
+        GridLayout:
+            cols: 2
+            size_hint_y: None
+            height: 30
+            spacing: 30
+
+            Label:
+                text: "Frequência"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: 'right'
+                text_size: self.size
+
+            Label:
+                id: freq_rede
+                text: "-.- Hz"
+                color: 0, 0, 0, 1
+                halign: 'left'
+                text_size: self.size
+
+        # BOTÃO FECHAR 
         BoxLayout:
             size_hint_y: None
             height: 60
@@ -796,16 +832,26 @@
             Widget:
 
 
-# JANELA DOS GRÁFICOS DO MOTOR
+# ====== GRÁFICOS DAS VARIAVEIS PRINCIPAIS  ========== # 
+# Será um popup por cada variavel!!
+
 <GraficoPopup>:
-    title: "Gráfico"
+    title: "GRÁFICO"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation:'vertical'
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         TimeSeriesGraph:
             id: graph
             xlabel: 'Horario'
             ylabel: 'Amplitude'
-            background_color: 0.5,0.5,0.5,0.5
+            background_color: 0.788, 0.780, 0.780, 1
             x_ticks_minor: 1        #subdivisões do eixo horizontal
             x_ticks_major: 5        #grid
             y_ticks_major: 5 
@@ -826,35 +872,35 @@
                 Label:
                     size_hint: (0.3,1) 
                     text:'Número de pontos do gráfico'
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxGrafico:
                     id: mp20
                     on_kv_post:
                         self.ids.label.text = '20' 
                         self.ids.checkbox.group = 'cd_group' 
                         self.ids.checkbox.active = True 
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxGrafico:
                     id: mp50
                     on_kv_post:
                         self.ids.label.text = '50' 
                         self.ids.checkbox.group = 'cd_group'
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxGrafico:
                     id: mp100
                     on_kv_post:
                         self.ids.label.text = '100' 
                         self.ids.checkbox.group = 'cd_group'
-            Button:
+            RoundedButton:
                 text: 'Fechar'  
                 size_hint: (0.2,1)
                 on_release: root.dismiss() 
 
-<LabeledCheckBoxDataGraph>:
+<LabelCheckBoxGrafico>:
     orientation: 'horizontal'
     size_hint: (0.1,1)
     CheckBox:
         id: checkbox
-        on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
+        # on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
     Label:
-        id: label 
+        id: label
 
 
 # =================== HISTORICO ================#
@@ -866,7 +912,7 @@
             id: graph
             xlabel: 'Horario'
             ylabel: 'Medicoes'
-            background_color: 0.5, 0.5, 0.5, 0.5
+            background_color: 0.788, 0.780, 0.780, 1
             x_ticks_minor: 1
             x_ticks_major: 5
             y_ticks_major: 100
@@ -884,9 +930,9 @@
             size_hint: (1, 0.1)
             Spinner:
                 id: dropdown
-                text: "Selecione"
-                values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
-                on_text: app.root.muda_graph(self.text)
+                text: "Selecione"                   # !! nessas partes comentadas -> adicionar valores e mudança de varivael pro grafico!!
+                # values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
+                # on_text: app.root.muda_graph(self.text)
 
         BoxLayout:
             orientation: 'horizontal'
@@ -911,20 +957,7 @@
                 halign: 'center'
                 valign: 'middle'
                 multiline: False
-            Button:
+            RoundedButton:
                 text: 'Fechar'
                 size_hint: (1, 0.8)
                 on_release: root.dismiss()
-
-<LabeledCheckBoxHistGraph>:
-    orientation: 'vertical'
-    size_hint: (0.2, 1)
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: (0.2, 1)
-        Spinner:
-            id: dropdown
-            text: "Selecione"
-            values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "temp_r", "temp_s", "temp_t", "temp_carc", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
-            on_text: app.root.muda_graph(self.text)
-

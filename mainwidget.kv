@@ -17,6 +17,8 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
+
+        # IMAGEM BASE DE FUNDO ====================================
         Image:
             source: 'imagens/baseDesligada_LIMPA.png'
             allow_stretch: True
@@ -34,7 +36,184 @@
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
             on_release: root._modbusPopup.open()  #abre o popup de configuração modbus
 
-        ## LABELS DE DADOS ##
+        # IMAGEM MOTOR LIGADO ====================================
+        Image:
+            source: 'imagens/motor_ligado.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.0145, 'y': 0.17}
+
+            opacity: 1 if root.motor_ligado else 0
+
+        # IMAGEM CONEXÃO ========================================
+        Image:                  #conexão feita!
+            source: 'imagens/conectado.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 0.26, 0.46
+            pos_hint: {'x': 0.834, 'y': 0.714}
+            opacity: 1 if root.conectado else 0
+
+        Image:                  #erro de conexão
+            source: 'imagens/conec_erro.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 0.26, 0.46
+            pos_hint: {'x': 0.834, 'y': 0.714}
+            opacity: 0 if root.conectado else 1
+
+
+        # BOTÕES GRAFICO =================================
+        # 1) Torque (TRANSPARENTE)
+        Button:
+            id: bt_graf_torque
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.27, 'top': 0.56}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+
+        #2) Velocidade
+        Button:
+            id: bt_graf_vel
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.04, 'top': 0.56}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+
+        #3) Pressão Tanque
+        Button:
+            id: bt_graf_PIT
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.252, 'top': 0.77}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico
+
+        #4)Vazão Válvulas
+        Button:
+            id: bt_graf_FIT
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.68, 'top': 0.843}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+        
+
+        # VÁLVULAS ==============================================
+        # XV_2:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.748, 'y': 0.455}
+
+            opacity: 1 if root.valvulas[0] else 0           #ATENÇÃO: indice começa em 0 e as válvulas a partir da 2
+        
+        LabelValvula:
+            id: XV_2
+            pos_hint: {'center_x': 0.95, 'center_y': 0.685}
+
+        RoundedButton:
+            id: valvula_XV1
+            text: "FECHA" if root.valvulas[0] else "ABRE"
+            pos_hint: {'center_x': 0.805, 'y': 0.7}  #caraca acertei o y na primeira de cagada
+            on_release: root.toggle_valvula(0)
+
+        # XV_3:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.748, 'y': 0.35}
+
+            opacity: 1 if root.valvulas[1] else 0
+        
+        LabelValvula:
+            id: XV_3
+            pos_hint: {'center_x': 0.95, 'center_y': 0.582}
+
+        RoundedButton:
+            id: valvula_XV3
+            text: "FECHA" if root.valvulas[1] else "ABRE"
+            pos_hint: {'center_x': 0.805, 'y': 0.592}
+            on_release: root.toggle_valvula(1)
+
+        # XV_4:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.748, 'y': 0.242}
+
+            opacity: 1 if root.valvulas[2] else 0
+        
+        LabelValvula:
+            id: XV_4
+            pos_hint: {'center_x': 0.95, 'center_y': 0.47}
+
+        RoundedButton:
+            id: valvula_XV4
+            text: "FECHA" if root.valvulas[2] else "ABRE"
+            pos_hint: {'center_x': 0.805, 'y': 0.486}
+            on_release: root.toggle_valvula(2)
+
+        # XV_5:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.748, 'y': 0.13}
+
+            opacity: 1 if root.valvulas[3] else 0
+        
+        LabelValvula:
+            id: XV_5
+            pos_hint: {'center_x': 0.95, 'center_y': 0.36}
+
+        RoundedButton:
+            id: valvula_XV5
+            text: "FECHA" if root.valvulas[3] else "ABRE"
+            pos_hint: {'center_x': 0.805, 'y': 0.374}
+            on_release: root.toggle_valvula(3)
+
+        # XV_6:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.748, 'y': 0.0235}
+
+            opacity: 1 if root.valvulas[4] else 0
+        
+        LabelValvula:
+            id: XV_6
+            pos_hint: {'center_x': 0.95, 'center_y': 0.254}
+
+        RoundedButton:
+            id: valvula_XV6
+            text: "FECHA" if root.valvulas[4] else "ABRE"
+            pos_hint: {'center_x': 0.805, 'y': 0.27} 
+            on_release: root.toggle_valvula(4)
+
+        ## LABELS DE DADOS ======================================
         LabelMedidas:
             id: vel_motor
             text: '--- RPM'
@@ -54,64 +233,22 @@
             id: vazao_valvulas
             text: '--- Nm³/min'
             pos_hint: {'center_x': 0.61, 'center_y': 0.797}
-
-        ## LABELS DE VALVULAS ##
-        LabelValvula:
-            id: XV_2
-            pos_hint: {'center_x': 0.95, 'center_y': 0.685}
-
-        LabelValvula:
-            id: XV_3
-            pos_hint: {'center_x': 0.95, 'center_y': 0.582}
-
-        LabelValvula:
-            id: XV_4
-            pos_hint: {'center_x': 0.95, 'center_y': 0.47}
-
-        LabelValvula:
-            id: XV_5
-            pos_hint: {'center_x': 0.95, 'center_y': 0.36}
-
-        LabelValvula:
-            id: XV_6
-            pos_hint: {'center_x': 0.95, 'center_y': 0.254}
-
-        # BOTÕES VALVULAS
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.7}  #caraca acertei o y na primeira de cagada
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.592}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.486}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.374}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.27}     
         
-        # BOTÕES INFERIORES -> OBS: conferir tamanho da fonte nos botões
+        # BOTÕES INFERIORES ====================================
         RoundedButton:
             text: "MEDIÇÕES"
-            pos_hint: {'center_x': 0.35, 'y': 0.02}
+            pos_hint: {'center_x': 0.42, 'y': 0.02}
             on_release: root._medidasPopup.open()   #abre o popup de medidas
 
         RoundedButton:
-            text: "GRÁFICOS"
-            pos_hint: {'center_x': 0.50, 'y': 0.02}
-            on_release: root._graficoPopup.open()   #abre o popup de gráficos
-
-        RoundedButton:
             text: "BD"
-            pos_hint: {'center_x': 0.65, 'y': 0.02}
+            pos_hint: {'center_x': 0.55, 'y': 0.02}
             on_release: root._bancoDadosPopup.open()   #abre o popup de banco de dados
         
         RoundedButton:
-            text: "LIGA"
+            text: "DESLIGA" if root.motor_ligado else "LIGA"    #Texto depende do estado
             pos_hint: {'center_x': 0.07, 'y': 0.24}
+            on_release: root.toggle_motor()                     #chama o método criado para mudar estado motor
 
         RoundedButton:
             text: "COMANDO"
@@ -127,4 +264,3 @@
             size_hint_y: 0.01
 
     
-        
