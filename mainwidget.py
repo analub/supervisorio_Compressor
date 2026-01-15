@@ -30,6 +30,7 @@ class MainWidget(BoxLayout):
         """
         Construtor do widget principal.
         """
+        GRAY_COLOR = (0.5, 0.5, 0.5, 1)
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
@@ -50,136 +51,54 @@ class MainWidget(BoxLayout):
         # Estrutura de dados para armazenar as medições em tempo real
         self._meas = {'timestamp': None, 'values': {}}
 
-        # Mapeamento de tipos e divisores
+        # Mapeamento de tipos, divisores e unidades
         self._tag_setup = {
             # Tags que são Floating Point (FP) - 32 bits / 2 registradores
-            'vel_motor': {'type': 'fp', 'div': 1},
-            'torque_motor': {'type': 'fp', 'div': 1},
-            'pressao_reservatorio': {'type': 'fp', 'div': 1},
-            'vazao_valvulas': {'type': 'fp', 'div': 1},
-            'temp_carcaca': {'type': 'fp', 'div': 10}, # FP que ainda precisa dividir por 10
+            'vel_motor': {'type': 'fp', 'div': 1, 'unit': ' RPM'},
+            'torque_motor': {'type': 'fp', 'div': 1, 'unit': ' Nm'},
+            'pressao_reservatorio': {'type': 'fp', 'div': 1, 'unit': ' bar'},
+            'vazao_valvulas': {'type': 'fp', 'div': 1, 'unit': ' m³/h'},
+            'temp_carcaca': {'type': 'fp', 'div': 10, 'unit': ' ºC'}, # FP que ainda precisa dividir por 10
 
             # Tags que são Inteiros (4X) - 16 bits / 1 registrador + Divisor
-            'freq_rede': {'type': 'int', 'div': 100},
-            'ddp_rs': {'type': 'int', 'div': 10},
-            'ddp_st': {'type': 'int', 'div': 10},
-            'ddp_tr': {'type': 'int', 'div': 10},
-            'corr_r': {'type': 'int', 'div': 10},
-            'corr_s': {'type': 'int', 'div': 10},
-            'corr_t': {'type': 'int', 'div': 10},
-            'corr_neutro': {'type': 'int', 'div': 10},
-            'corr_media': {'type': 'int', 'div': 10},
-            'fp_total': {'type': 'int', 'div': 1000},
-            'dem_anterior': {'type': 'int', 'div': 10},
-            'dem_atual': {'type': 'int', 'div': 10},
-            'dem_media': {'type': 'int', 'div': 10},
-            'dem_prevista': {'type': 'int', 'div': 10}
-
-            # # Válvulas e seus respectivos bits (conforme a tabela do CLP)
-            # 'XV_2': {'type': 'bit', 'bit': 1},
-            # 'XV_3': {'type': 'bit', 'bit': 2},
-            # 'XV_4': {'type': 'bit', 'bit': 3},
-            # 'XV_5': {'type': 'bit', 'bit': 4},
-            # 'XV_6': {'type': 'bit', 'bit': 5}
-            
-            # As demais potências são Divisor 1 (valor direto)
+            'freq_rede': {'type': 'int', 'div': 100, 'unit': ' Hz'},
+            'ddp_rs': {'type': 'int', 'div': 10, 'unit': ' V'},
+            'ddp_st': {'type': 'int', 'div': 10, 'unit': ' V'},
+            'ddp_tr': {'type': 'int', 'div': 10, 'unit': ' V'},
+            'corr_r': {'type': 'int', 'div': 10, 'unit': ' A'},
+            'corr_s': {'type': 'int', 'div': 10, 'unit': ' A'},
+            'corr_t': {'type': 'int', 'div': 10, 'unit': ' A'},
+            'corr_neutro': {'type': 'int', 'div': 10, 'unit': ' A'},
+            'corr_media': {'type': 'int', 'div': 10, 'unit': ' A'},
+            'fp_total': {'type': 'int', 'div': 1000, 'unit': ''},
+            'dem_anterior': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_atual': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_media': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_prevista': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_total': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_reativa_total': {'type': 'int', 'div': 1, 'unit': ' VAr'},
+            'pot_aparente_total': {'type': 'int', 'div': 1, 'unit': ' VA'},
+            'pot_ativa_r': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_s': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'}
         }
 
-        # Mapeamento de unidades de medida da planta de compressão
-        units = {
-            'vel_motor': ' RPM', 
-            'torque_motor': ' Nm', 
-            'pressao_reservatorio': ' bar', 
-            'vazao_valvulas': ' m³/h',
-            'temp_carcaca': ' °C', 
-            'freq_rede': ' Hz', 
-            'ddp_rs': ' V', 
-            'ddp_st': ' V', 
-            'ddp_tr': ' V',
-            'corr_r': ' A', 
-            'corr_s': ' A', 
-            'corr_t': ' A', 
-            'corr_neutro': ' A', 
-            'corr_media': ' A',
-            'pot_ativa_total': ' kW', 
-            'pot_reativa_total': ' kVAr', 
-            'pot_aparente_total': ' kVA',
-            'dem_anterior': ' kW', 
-            'dem_atual': ' kW', 
-            'dem_media': ' kW', 
-            'dem_prevista': ' kW',
-            'pot_ativa_r': ' kW', 
-            'pot_ativa_s': ' kW', 
-            'pot_ativa_t': ' kW', 
-            'fp_total': ''
-        }
-
-        # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico e Unidade)
+        # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico, Tipo, Divisor e Unidade)
         for key, value in kwargs.get('modbus_addrs').items():
-            if key in ['vel_motor', 'torque_motor', 'pressao_reservatorio']:
-                plot_color = (1, 0, 0, 1) # Vermelho (Principais)
-            elif 'ddp' in key:
-                plot_color = (0, 0, 1, 1) # Azul (Tensões)
-            elif 'corr' in key:
-                plot_color = (1, 0.5, 0, 1) # Laranja (Correntes)
-            else:
-                plot_color = (0, 1, 0, 1) # Verde (Outros)
             # Adicionamos as informações de tratamento na tag
-            setup = self._tag_setup.get(key, {'type': 'int', 'div': 1}) # Padrão é inteiro div 1
+            setup = self._tag_setup.get(key, {'type': 'int', 'div': 1, 'unit': ''})
             self._tags[key] = {
                 'addr': value, 
-                'color': plot_color, 
-                'unit': units.get(key, ''),
-                'type': setup['type'],
-                'div': setup['div']
+                'color': setup.get('color', GRAY_COLOR),
+                **setup  # Isso "descompacta" todas as chaves do setup para dentro de _tags[key]
             }
 
     def registers_to_float(self, registers):
         """
         Converte 2 registradores de 16 bits em 1 float de 32 bits 
         """
-        packed = struct.pack('>HH', *registers)
+        packed = struct.pack('>HH', registers[1], registers[0]) 
         return struct.unpack('>f', packed)[0]
-    
-    # def sendCommand(self, key, value):
-    #     """
-    #     Envia um comando de escrita para o servidor Modbus.
-    #     key: ID da tag (ex: 'XV_2')
-    #     value: 0 para Abrir, 1 para Fechar
-    #     """
-    #     try:
-    #         if not self._modbusClient.is_open():
-    #             print("Erro: Cliente Modbus desconectado.")
-    #             return
-
-    #         tag = self._tags.get(key)
-    #         if tag and tag['type'] == 'bit':
-    #             # --- Lógica de Escrita em Bit (Read-Modify-Write) ---
-    #             # 1. Lê o valor atual do registrador (16 bits)
-    #             current_value = self._modbusClient.read_holding_registers(tag['addr'], 1)
-                
-    #             if current_value:
-    #                 new_val = current_value[0]
-    #                 bit_pos = tag['bit']
-                    
-    #                 if value == 1: # Fechar (Setar bit para 1)
-    #                     new_val |= (1 << bit_pos)
-    #                 else:          # Abrir (Zerar bit para 0)
-    #                     new_val &= ~(1 << bit_pos)
-                    
-    #                 # 2. Escreve o novo valor inteiro de volta no endereço
-    #                 success = self._modbusClient.write_single_register(tag['addr'], new_val)
-    #                 if success:
-    #                     print(f"Comando enviado com sucesso para {key}: {value}")
-    #                 else:
-    #                     print(f"Falha ao enviar comando para {key}")
-
-    #         elif tag and tag['type'] == 'int':
-    #             # Escrita simples para inteiros (ex: Setpoint)
-    #             self._modbusClient.write_single_register(tag['addr'], int(value * tag['div']))
-
-    #     except Exception as e:
-    #         print(f"Erro ao enviar comando: {e.args}")
 
     def startDataRead(self, ip, port):
         """
@@ -189,7 +108,6 @@ class MainWidget(BoxLayout):
         self._serverPort = port
         self._modbusClient.host = self._serverIP
         self._modbusClient.port = self._serverPort
-        print("conectou bbs")
         try:
             # Muda o cursor para 'espera' enquanto tenta conectar
             Window.set_system_cursor("wait")
@@ -232,19 +150,8 @@ class MainWidget(BoxLayout):
         self._meas['timestamp'] = datetime.now()
         for key, tag in self._tags.items():
             try:
-                # LER DADOS DO TIPO BIT (VÁLVULAS)
-                if tag['type'] == 'bit':
-                    result = self._modbusClient.read_holding_registers(tag['addr'], 1)
-                    if result:
-                        # EXTRAÇÃO DO BIT:
-                        # 1. Pegamos o valor (ex: 712)
-                        # 2. Deslocamos os bits para a direita (>>) até o bit que queremos
-                        # 3. Fazemos um AND (& 1) para isolar apenas aquele bit
-                        status_bit = (result[0] >> tag['bit']) & 1
-                        self._meas['values'][key] = status_bit
-
                 # LER DADOS DO TIPO FP (MOTOR, TORQUE, PRESSÃO)
-                elif tag['type'] == 'fp':
+                if tag['type'] == 'fp':
                     result = self._modbusClient.read_holding_registers(tag['addr'], 2)
                     if result:
                         self._meas['values'][key] = self.registers_to_float(result) / tag['div']
@@ -259,18 +166,32 @@ class MainWidget(BoxLayout):
                 print(f"Erro na leitura da tag {key}: {e.args}")
 
     def updateGUI(self):
-        """
-        Método para atualização da interface gráfica a partir dos dados lidos.
-        """
         for key, tag_info in self._tags.items():
             if key in self._meas['values']:
                 valor = self._meas['values'][key]
-                unidade = tag_info['unit']
-                # Formata para 2 casas decimais se for float ou tiver divisor
-                if tag_info['div'] > 1 or tag_info['type'] == 'fp':
-                    self.ids[key].text = f"{valor:.2f}{unidade}"
+                unidade = tag_info.get('unit', '')
+                
+                # Formatação do texto
+                if tag_info['type'] == 'bit':
+                    txt = "FECHADA" if valor == 1 else "ABERTA"
+                elif tag_info['div'] > 1 or tag_info['type'] == 'fp':
+                    txt = f"{valor:.2f}{unidade}"
                 else:
-                    self.ids[key].text = f"{int(valor)}{unidade}"
+                    txt = f"{int(valor)}{unidade}"
+
+                # --- ATUALIZAÇÃO INDEPENDENTE ---
+                
+                # 1. Atualiza a Tela Principal
+                if key in self.ids:
+                    self.ids[key].text = txt
+                
+                # 2. Atualiza o Popup de Medidas
+                if hasattr(self, '_medidasPopup') and key in self._medidasPopup.ids:
+                    self._medidasPopup.ids[key].text = txt
+
+                # 3. Atualiza o Popup de Temperatura (temp_carcaca)
+                if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
+                    self._temperaturaPopup.ids[key].text = txt
 
     def stopRefresh(self):
         """ 
