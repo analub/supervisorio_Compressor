@@ -481,7 +481,7 @@
             Widget:
 
             Label:
-                id: temp_C
+                id: temp_carcaca
                 text: "-.- °C"
                 font_size: 18
                 color: 0, 0, 0, 1
@@ -566,19 +566,19 @@
                         text: "R–S"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_rn
+                        id: ddp_rs
 
                     Label:
                         text: "S–T"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_sn
+                        id: ddp_st
 
                     Label:
                         text: "T–R"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_tn
+                        id: ddp_tr
 
             # ================= CORRENTE =================
             BoxLayout:
@@ -608,31 +608,31 @@
                         text: "Fase R"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_r
+                        id: corr_r
 
                     Label:
                         text: "Fase S"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_s
+                        id: corr_s
 
                     Label:
                         text: "Fase T"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_t
+                        id: corr_t
 
                     Label:
                         text: "Neutro"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_n
+                        id: corr_neutro
 
                     Label:
                         text: "Média"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_media
+                        id: corr_media
 
             # ================= DEMANDA =================
             BoxLayout:
@@ -662,25 +662,25 @@
                         text: "Anterior"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_anterior
+                        id: dem_anterior
 
                     Label:
                         text: "Atual"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_atual
+                        id: dem_atual
 
                     Label:
                         text: "Média"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_media
+                        id: dem_media
 
                     Label:
                         text: "Prevista"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_prevista
+                        id: dem_prevista
 
             # ================= POTÊNCIA =================
             BoxLayout:
@@ -727,24 +727,25 @@
                             cols: 2
                             row_default_height: 30
                             row_force_default: True
+                            id: pot_ativa
 
                             Label:
                                 text: "R"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_r
+                                id: pot_ativa_r
 
                             Label:
                                 text: "S"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_s
+                                id: pot_ativa_s
 
                             Label:
                                 text: "T"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_t
+                                id: pot_ativa_t
 
                     # -------- OUTRAS --------
                     BoxLayout:
@@ -756,7 +757,7 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: reativa_total
+                            id: pot_reativa_total
                             text: "-.- var"
                             color: 0, 0, 0, 1
 
@@ -765,7 +766,7 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: aparente_total
+                            id: pot_aparente_total
                             text: "-.- VA"
                             color: 0, 0, 0, 1
 
@@ -774,7 +775,7 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: fator_potencia
+                            id: fp_total
                             text: "-.-"
                             color: 0, 0, 0, 1
 
