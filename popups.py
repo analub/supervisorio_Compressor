@@ -128,8 +128,5 @@ class historicoPopup(Popup):
         super().__init__()
     
 
-class LabeledCheckBoxDataGraph(BoxLayout):
-    pass
-
-class LabeledCheckBoxDataGraph(BoxLayout):  
+class LabelCheckBoxGrafico(BoxLayout):
     pass
