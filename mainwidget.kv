@@ -34,6 +34,47 @@
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
             on_release: root._modbusPopup.open()  #abre o popup de configuração modbus
 
+        # BOTÕES GRAFICO =================================
+        # 1) Torque (TRANSPARENTE)
+        Button:
+            id: bt_graf_torque
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.27, 'top': 0.56}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+
+        #2) Velocidade
+        Button:
+            id: bt_graf_vel
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.04, 'top': 0.56}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+
+        #3) Pressão Tanque
+        Button:
+            id: bt_graf_PIT
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.252, 'top': 0.77}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico
+
+        #4)Vazão Válvulas
+        Button:
+            id: bt_graf_FIT
+            size_hint: 0.04, 0.06
+            pos_hint: {'right': 0.68, 'top': 0.843}
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graficoPopup.open() #abre o popup do grafico 
+
         ## LABELS DE DADOS ##
         LabelMedidas:
             id: vel_motor

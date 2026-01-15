@@ -803,14 +803,22 @@
 # Será um popup por cada variavel!!
 
 <GraficoPopup>:
-    title: "Gráfico"
+    title: "GRÁFICO"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation:'vertical'
+        canvas.before:
+            Color:
+                rgba: 0.788, 0.780, 0.780, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         TimeSeriesGraph:
             id: graph
             xlabel: 'Horario'
             ylabel: 'Amplitude'
-            background_color: 0.5,0.5,0.5,0.5
+            background_color: 0.788, 0.780, 0.780, 1
             x_ticks_minor: 1        #subdivisões do eixo horizontal
             x_ticks_major: 5        #grid
             y_ticks_major: 5 
@@ -871,7 +879,7 @@
             id: graph
             xlabel: 'Horario'
             ylabel: 'Medicoes'
-            background_color: 0.5, 0.5, 0.5, 0.5
+            background_color: 0.788, 0.780, 0.780, 1
             x_ticks_minor: 1
             x_ticks_major: 5
             y_ticks_major: 100
