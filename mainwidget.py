@@ -20,6 +20,7 @@ class MainWidget(BoxLayout):
     motor_ligado = BooleanProperty(False)
      # False = fechada | True = aberta
     valvulas = ListProperty([False, False, False, False, False])
+    conectado = BooleanProperty(False)
 
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
@@ -196,14 +197,17 @@ class MainWidget(BoxLayout):
             Window.set_system_cursor("arrow") # Volta o cursor ao normal
             if self._modbusClient.is_open:
                 # Inicia a Thread para que a interface não trave durante o loop de leitura
+                self.conectado = True  #conexao ok -> aparece imagem na tela
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
                 # Atualiza a interface indicando sucesso
                 self.ids.img_con.source = 'imgs/conectado.png'
                 self._modbusPopup.dismiss()
             else:
+                self.conectado = False          #erro de conexão -> aparece imagem vermelha
                 self._modbusPopup.setInfo("Falha na conexão com o servidor.")
         except Exception as e:
+            self.conectado = False              #erro -> imagem vermelha  
             print("Erro: ", e.args)
 
     def updater(self):
