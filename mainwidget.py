@@ -61,16 +61,16 @@ class MainWidget(BoxLayout):
             'corr_neutro': {'type': 'int', 'div': 10, 'unit': ' A'},
             'corr_media': {'type': 'int', 'div': 10, 'unit': ' A'},
             'fp_total': {'type': 'int', 'div': 1000, 'unit': ''},
-            'dem_anterior': {'type': 'int', 'div': 10, 'unit': ' kW'},
-            'dem_atual': {'type': 'int', 'div': 10, 'unit': ' kW'},
-            'dem_media': {'type': 'int', 'div': 10, 'unit': ' kW'},
-            'dem_prevista': {'type': 'int', 'div': 10, 'unit': ' kW'},
-            'pot_ativa_total': {'type': 'int', 'div': 1, 'unit': ' kW'},
-            'pot_reativa_total': {'type': 'int', 'div': 1, 'unit': ' kVAr'},
-            'pot_aparente_total': {'type': 'int', 'div': 1, 'unit': ' kVA'},
-            'pot_ativa_r': {'type': 'int', 'div': 1, 'unit': ' kW'},
-            'pot_ativa_s': {'type': 'int', 'div': 1, 'unit': ' kW'},
-            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' kW'}
+            'dem_anterior': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_atual': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_media': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'dem_prevista': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_total': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_reativa_total': {'type': 'int', 'div': 1, 'unit': ' VAr'},
+            'pot_aparente_total': {'type': 'int', 'div': 1, 'unit': ' VA'},
+            'pot_ativa_r': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_s': {'type': 'int', 'div': 1, 'unit': ' W'},
+            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'}
         }
 
         # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico, Tipo, Divisor e Unidade)
@@ -87,7 +87,7 @@ class MainWidget(BoxLayout):
         """
         Converte 2 registradores de 16 bits em 1 float de 32 bits 
         """
-        packed = struct.pack('>HH', *registers)
+        packed = struct.pack('>HH', registers[1], registers[0]) 
         return struct.unpack('>f', packed)[0]
 
     def startDataRead(self, ip, port):
@@ -153,18 +153,32 @@ class MainWidget(BoxLayout):
                 print(f"Erro na leitura da tag {key}: {e.args}")
 
     def updateGUI(self):
-        """
-        Método para atualização da interface gráfica a partir dos dados lidos.
-        """
         for key, tag_info in self._tags.items():
             if key in self._meas['values']:
                 valor = self._meas['values'][key]
                 unidade = tag_info.get('unit', '')
-                # Formata para 2 casas decimais se for float ou tiver divisor
-                if tag_info['div'] > 1 or tag_info['type'] == 'fp':
-                    self.ids[key].text = f"{valor:.2f}{unidade}"
+                
+                # Formatação do texto
+                if tag_info['type'] == 'bit':
+                    txt = "FECHADA" if valor == 1 else "ABERTA"
+                elif tag_info['div'] > 1 or tag_info['type'] == 'fp':
+                    txt = f"{valor:.2f}{unidade}"
                 else:
-                    self.ids[key].text = f"{int(valor)}{unidade}"
+                    txt = f"{int(valor)}{unidade}"
+
+                # --- ATUALIZAÇÃO INDEPENDENTE ---
+                
+                # 1. Atualiza a Tela Principal
+                if key in self.ids:
+                    self.ids[key].text = txt
+                
+                # 2. Atualiza o Popup de Medidas
+                if hasattr(self, '_medidasPopup') and key in self._medidasPopup.ids:
+                    self._medidasPopup.ids[key].text = txt
+
+                # 3. Atualiza o Popup de Temperatura (temp_carcaca)
+                if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
+                    self._temperaturaPopup.ids[key].text = txt
 
     def stopRefresh(self):
         """ 
