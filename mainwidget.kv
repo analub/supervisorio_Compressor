@@ -17,6 +17,8 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
+
+        # IMAGEM BASE DE FUNDO ====================================
         Image:
             source: 'imagens/baseDesligada_LIMPA.png'
             allow_stretch: True
@@ -74,8 +76,24 @@
             background_down: ''
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
             on_release: root._graficoPopup.open() #abre o popup do grafico 
+        
+        # IMAGEM MOTOR LIGADO ====================================
+        Image:
+            source: 'imagens/motor_ligado.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.0145, 'y': 0.17}
 
-        ## LABELS DE DADOS ##
+            opacity: 1 if root.motor_ligado else 0
+
+        # IMAGEM CONEXÃO ========================================
+        
+        # IMAGEM VÁLVULAS ========================================
+
+
+        ## LABELS DE DADOS ======================================
         LabelMedidas:
             id: vel_motor
             text: '--- RPM'
@@ -117,7 +135,7 @@
             id: XV_6
             pos_hint: {'center_x': 0.95, 'center_y': 0.254}
 
-        # BOTÕES VALVULAS
+        # BOTÕES VALVULAS ====================================
         RoundedButton:
             text: "ABRE"
             pos_hint: {'center_x': 0.805, 'y': 0.7}  #caraca acertei o y na primeira de cagada
@@ -134,25 +152,21 @@
             text: "ABRE"
             pos_hint: {'center_x': 0.805, 'y': 0.27}     
         
-        # BOTÕES INFERIORES -> OBS: conferir tamanho da fonte nos botões
+        # BOTÕES INFERIORES ====================================
         RoundedButton:
             text: "MEDIÇÕES"
-            pos_hint: {'center_x': 0.35, 'y': 0.02}
+            pos_hint: {'center_x': 0.42, 'y': 0.02}
             on_release: root._medidasPopup.open()   #abre o popup de medidas
 
         RoundedButton:
-            text: "GRÁFICOS"
-            pos_hint: {'center_x': 0.50, 'y': 0.02}
-            on_release: root._graficoPopup.open()   #abre o popup de gráficos
-
-        RoundedButton:
             text: "BD"
-            pos_hint: {'center_x': 0.65, 'y': 0.02}
+            pos_hint: {'center_x': 0.55, 'y': 0.02}
             on_release: root._bancoDadosPopup.open()   #abre o popup de banco de dados
         
         RoundedButton:
-            text: "LIGA"
+            text: "DESLIGA" if root.motor_ligado else "LIGA"    #Texto depende do estado
             pos_hint: {'center_x': 0.07, 'y': 0.24}
+            on_release: root.toggle_motor()                     #chama o método criado para mudar estado motor
 
         RoundedButton:
             text: "COMANDO"

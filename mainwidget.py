@@ -7,11 +7,15 @@ from threading import Thread # Permite rodar funções em segundo plano sem trav
 from time import sleep # Utilizado para criar intervalos de tempo entre as leituras
 from datetime import datetime
 import struct
+from kivy.properties import BooleanProperty
 
 class MainWidget(BoxLayout):
     """
     Widget principal do aplicativo
     """
+    # Estado inicial das imagens (motor e conexão -> planta desligada)
+    motor_ligado = BooleanProperty(False)
+
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
     _updateWidgets = True # Flag (bandeira) para controlar quando o loop de leitura deve rodar ou parar
@@ -264,4 +268,10 @@ class MainWidget(BoxLayout):
         Para o loop da Thread de forma segura ao fechar o app. 
         """
         self._updateWidgets = False
+
+    def toggle_motor(self):
+        """
+        Método que muda o estado do motor. Usado para mudar a imagem do motor
+        """
+        self.motor_ligado = not self.motor_ligado
 
