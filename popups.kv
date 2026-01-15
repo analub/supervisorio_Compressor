@@ -522,7 +522,7 @@
     background_color: 0, 0, 0, 0
     size_hint: None, None
     width: 650
-    height: 550
+    height: 600
 
     BoxLayout:                          #BoxLayou Pai
         orientation: 'vertical'
@@ -781,6 +781,38 @@
                             id: fator_potencia
                             text: "-.-"
                             color: 0, 0, 0, 1
+        # Frequencia   
+        # BoxLayout:
+        #     size_hint_y: None
+        #     height: 30 
+        #     Label:
+        #         text: "Frequência"
+        #         color: 0, 0, 0, 1
+        #     Label:
+        #         id: freq_rede
+        #         text: "-.- Hz"
+        #         color: 0, 0, 0, 1
+
+        # Frequência
+        GridLayout:
+            cols: 2
+            size_hint_y: None
+            height: 30
+            spacing: 30
+
+            Label:
+                text: "Frequência"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: 'right'
+                text_size: self.size
+
+            Label:
+                id: freq_rede
+                text: "-.- Hz"
+                color: 0, 0, 0, 1
+                halign: 'left'
+                text_size: self.size
 
         # BOTÃO FECHAR 
         BoxLayout:
