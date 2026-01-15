@@ -8,6 +8,9 @@ from time import sleep # Utilizado para criar intervalos de tempo entre as leitu
 from datetime import datetime
 import struct
 from kivy.properties import BooleanProperty
+from kivy.properties import ListProperty
+from kivy.uix.floatlayout import FloatLayout
+
 
 class MainWidget(BoxLayout):
     """
@@ -15,6 +18,8 @@ class MainWidget(BoxLayout):
     """
     # Estado inicial das imagens (motor e conexão -> planta desligada)
     motor_ligado = BooleanProperty(False)
+     # False = fechada | True = aberta
+    valvulas = ListProperty([False, False, False, False, False])
 
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
@@ -271,7 +276,13 @@ class MainWidget(BoxLayout):
 
     def toggle_motor(self):
         """
-        Método que muda o estado do motor. Usado para mudar a imagem do motor
+        Método que muda o estado do motor. Usado para mudar a imagem da planta
         """
         self.motor_ligado = not self.motor_ligado
 
+    def toggle_valvula(self, idx):
+        
+        estados = self.valvulas[:]
+        estados[idx] = not estados[idx]
+        self.valvulas = estados
+        
