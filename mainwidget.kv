@@ -64,6 +64,35 @@
             pos_hint: {'x': 0.834, 'y': 0.714}
             opacity: 0 if root.conectado else 1
 
+        # INDICADORES LINEARES -> MEDIDAS PRINCIPAIS
+        #1) VELOCIDADE
+        LinearIndicator:
+            id: ind_vel
+            max_value: 3600                     # RPM máximo
+            size_hint: 0.09, 0.04               #não mudar! igual para todos 
+            pos_hint: {'x': 0.04, 'y': 0.60}
+
+        # #2) TORQUE
+        LinearIndicator:
+            id: ind_torque
+            max_value: 1500                     # Nm máximo
+            size_hint: 0.09, 0.04               #não mudar! igual para todos 
+            pos_hint: {'x': 0.145, 'y': 0.60}
+
+        # #3) PRESSÃO
+        LinearIndicator:
+            id: ind_press
+            max_value: 5             # bar
+            size_hint: 0.09, 0.04   #não mudar! igual para todos 
+            pos_hint: {'x': 0.258, 'y': 0.79}
+
+        # #4) VAZÃO
+        LinearIndicator:
+            id: ind_vazao
+            max_value: 10       # m³/h
+            size_hint: 0.09, 0.04   #não mudar! igual para todos 
+            pos_hint: {'x': 0.556, 'y': 0.865}
+
 
         # BOTÕES GRAFICO =================================
         # 1) Torque (TRANSPARENTE)
@@ -263,4 +292,42 @@
         Widget:
             size_hint_y: 0.01
 
-    
+# REGRA QUE AJUDA IMPLEMENTAR OS INDICADORES LINEARES 
+<LinearIndicator>:
+    size_hint: None, None
+    size_hint: 0.143, 0.046   # mesma proporção da regua
+    Image:          #fica fixa -> muda a animação depois
+        source: 'imagens/indicador_linear.png'
+        allow_stretch: True
+        keep_ratio: False
+        size: root.size
+        pos: root.pos
+
+    Widget:             #muda com as medidas -> barrinha dinamica
+        canvas:
+            Color:
+                rgba: 0.2, 0.6, 1, 0.9
+            Rectangle:                      # na horizontal
+                pos: root.x, root.y
+                size: root.fill_width(), root.height
+
+
+# <LinearIndicator>:
+#     # orientação: horizontal
+#     size_hint: None, None
+
+#     canvas.before:
+#         # Barra preenchida (medida)
+#         Color:
+#             rgba: 0.2, 0.6, 0.9, 0.9
+#         Rectangle:
+#             size: self.fill_width(), self.height
+#             pos: self.pos
+
+#     # Imagem da régua (fica por cima da barra)
+#     Image:
+#         source: root.ruler_img
+#         allow_stretch: True
+#         keep_ratio: False
+#         size: root.size
+#         pos: root.pos

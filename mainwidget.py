@@ -10,6 +10,12 @@ import struct
 from kivy.properties import BooleanProperty
 from kivy.properties import ListProperty
 from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import NumericProperty
+from kivy.uix.widget import Widget
+#para testar a escala linear na interface sem o modbus
+from kivy.clock import Clock
+from random import uniform
+
 
 
 class MainWidget(BoxLayout):
@@ -92,6 +98,8 @@ class MainWidget(BoxLayout):
                 'color': setup.get('color', GRAY_COLOR),
                 **setup  # Isso "descompacta" todas as chaves do setup para dentro de _tags[key]
             }
+        #Apagar depois -> apenas para teste do indicador linear na interface (sem usar modbus):
+        Clock.schedule_interval(self.simular_dados, 0.5)
 
     def registers_to_float(self, registers):
         """
@@ -192,6 +200,7 @@ class MainWidget(BoxLayout):
                 # 3. Atualiza o Popup de Temperatura (temp_carcaca)
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
+        self.atualizar_indicadores() #para as escalar lineares na interface      
 
     def stopRefresh(self):
         """ 
@@ -206,8 +215,48 @@ class MainWidget(BoxLayout):
         self.motor_ligado = not self.motor_ligado
 
     def toggle_valvula(self, idx):
+        """
+        Método que atualiza o estado das 5 válvulas
+        """
         
         estados = self.valvulas[:]
         estados[idx] = not estados[idx]
         self.valvulas = estados
-        
+
+    def atualizar_indicadores(self):
+        """
+        Método que atualiza o nível dos indicadores lineares
+        """
+        valores = self._meas['values']
+
+        if 'vel_motor' in valores:
+            self.ids.ind_vel.value = valores['vel_motor']
+
+        if 'torque_motor' in valores:
+            self.ids.ind_torque.value = valores['torque_motor']
+
+        if 'pressao_reservatorio' in valores:
+            self.ids.ind_press.value = valores['pressao_reservatorio']
+
+        if 'vazao_valvulas' in valores:
+            self.ids.ind_vazao.value = valores['vazao_valvulas']
+
+## APENAS PARA SIMULAR DADOS DE TESTE PARA ESCLA LINEAR NA INTERFACE
+    def simular_dados(self, dt):
+        self._meas['values']['vel_motor'] = uniform(0, 3600)
+        self._meas['values']['torque_motor'] = uniform(0, 1500)
+        self._meas['values']['pressao_reservatorio'] = uniform(0, 5)
+        self._meas['values']['vazao_valvulas'] = uniform(0, 10)
+
+        self.atualizar_indicadores()
+
+
+# CLASSE QUE AJUDA NA IMPLEMENTAÇÃO DOS INDICADORES LINEARES
+class LinearIndicator(Widget):
+    value = NumericProperty(0)
+    max_value = NumericProperty(1)
+
+    def fill_width(self):
+        if self.max_value == 0:
+            return 0
+        return (self.value / self.max_value) * self.width
