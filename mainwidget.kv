@@ -48,22 +48,18 @@
             opacity: 1 if root.motor_ligado else 0
 
         # IMAGEM CONEXÃO ========================================
-        Image:                  #conexão feita!
-            source: 'imagens/conectado.png'
+        Image:
+            id: img_con
+            # Define a imagem baseada no status
+            source: 'imagens/conectado.png' if root.status_conexao == 1 else 'imagens/conec_erro.png'
+            
+            # Define a opacidade: 1 se for status 1 ou 2; 0 se for status 0 (inicial)
+            opacity: 1 if root.status_conexao > 0 else 0
+            
             allow_stretch: True
             keep_ratio: False
             size_hint: 0.26, 0.46
             pos_hint: {'x': 0.834, 'y': 0.714}
-            opacity: 1 if root.conectado else 0
-
-        Image:                  #erro de conexão
-            source: 'imagens/conec_erro.png'
-            allow_stretch: True
-            keep_ratio: False
-            size_hint: 0.26, 0.46
-            pos_hint: {'x': 0.834, 'y': 0.714}
-            opacity: 0 if root.conectado else 1
-
 
         # BOTÕES GRAFICO =================================
         # 1) Torque (TRANSPARENTE)
