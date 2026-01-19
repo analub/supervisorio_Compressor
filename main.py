@@ -64,7 +64,21 @@ class MainApp(App):
             'XV_3': 712,
             'XV_4': 712,
             'XV_5': 712,
-            'XV_6': 712
+            'XV_6': 712,
+
+            # --- TAGS DE COMANDO --- 
+            'tipo_motor': 708,
+            'indica_driver': 1216,
+            'sel_driver': 1324,
+            'tesys': 1319,
+            'atv31': 1312,
+            'ats48': 1316,
+            'ats48_dcc': 1318,
+            'ats48_acc': 1317,
+            'atv31': 1312,
+            'atv31_velocidade': 1313,
+            'habilita': 1328
+
         })
         return self._widget
     
