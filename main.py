@@ -75,7 +75,6 @@ class MainApp(App):
             'ats48': 1316,
             'ats48_dcc': 1318,
             'ats48_acc': 1317,
-            'atv31': 1312,
             'atv31_velocidade': 1313,
             'habilita': 1328
 

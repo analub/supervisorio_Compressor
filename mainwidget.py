@@ -80,7 +80,19 @@ class MainWidget(BoxLayout):
             'pot_aparente_total': {'type': 'int', 'div': 1, 'unit': ' VA'},
             'pot_ativa_r': {'type': 'int', 'div': 1, 'unit': ' W'},
             'pot_ativa_s': {'type': 'int', 'div': 1, 'unit': ' W'},
-            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'}
+            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'},
+
+            # Tags de comando
+            'tipo_motor': {'type': 'int', 'div': 1},
+            'indica_driver': {'type': 'int', 'div': 1},
+            'sel_driver': {'type': 'int', 'div': 1},
+            'tesys': {'type': 'int', 'div': 1},
+            'atv31': {'type': 'int', 'div': 1},
+            'ats48': {'type': 'int', 'div': 1},
+            'ats48_dcc': {'type': 'int', 'div': 1},
+            'ats48_acc': {'type': 'int', 'div': 1},
+            'atv31_velocidade': {'type': 'int', 'div': 10},
+            'habilita': {'type': 'bit', 'div': 1}
         }
 
         # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico, Tipo, Divisor e Unidade)
