@@ -34,7 +34,7 @@ class MainWidget(BoxLayout):
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
-        self._partida_type = None
+        self._partida_type = ''
         
         self._comandoPopup = ComandoPopup()
         self._medidasPopup = MedidasPopup()
@@ -223,7 +223,6 @@ class MainWidget(BoxLayout):
             'softstart': self._tags['ats48']['addr'],
             'inversor': self._tags['atv31']['addr']
         }
-
         sel_driver_map = {'softstart': 1, 'inversor': 2, 'direta': 3}
         sel_driver_addr = self._tags['sel_driver']['addr']
         sel_value = sel_driver_map.get(partida_type, 3)
@@ -257,25 +256,6 @@ class MainWidget(BoxLayout):
 
         if addr and self._modbusClient.is_open:
             self._modbusClient.write_single_register(addr, value)
-
-    def select_start_button(self, partida_type):
-        self.set_partida_type(partida_type)
-
-        # IDs definidos no KV
-        id_map = {
-            'direta': 'btn_direta',
-            'softstart': 'btn_softstart',
-            'inversor': 'btn_inversor'
-        }
-
-        for btn_id in id_map.values():
-            if btn_id in self.ids:
-                self.ids[btn_id].background_color = (0.5, 0.5, 0.5, 1)
-
-        selected_id = id_map.get(partida_type)
-        if selected_id in self.ids:
-            self.ids[selected_id].background_color = (0, 1, 0, 1)
-
 
     def stopRefresh(self):
         """ 

@@ -51,6 +51,7 @@ class ComandoPopup(Popup):
     """
         Popup para enviar comandos de partida ao sistema
     """
+
     def trocar_tela(self, nome_tela):
         """
         Troca a subtela de configuração conforme o tipo de partida
