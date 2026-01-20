@@ -301,6 +301,9 @@ class MainWidget(BoxLayout):
 
         self.atualizar_indicadores()
 
+    def motorOn(self):
+        pass
+
 
 # CLASSE QUE AJUDA NA IMPLEMENTAÇÃO DOS INDICADORES LINEARES
 class LinearIndicator(Widget):
