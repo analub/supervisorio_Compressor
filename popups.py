@@ -126,7 +126,7 @@ class BancoDadosPopup(Popup):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Cria a linha do gráfico (cor amarela)
-        self.plot = LinePlot(line_width=1.5, color=[1, 1, 0, 1]) 
+        self.plot = LinePlot(line_width=2, color=[1, 0, 0, 1]) 
         # Adiciona a linha ao objeto Graph definido no arquivo .kv
         self.ids.graph_bd.add_plot(self.plot)
 
