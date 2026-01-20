@@ -235,7 +235,8 @@ class MainWidget(BoxLayout):
             data_to_save['timestamp'] = datetime.now()
 
             for key, value in self._meas['values'].items():
-                data_to_save[key] = value
+                if key in colunas_permitidas:
+                    data_to_save[key] = value
             
             dado = CompData(**data_to_save)
             self._session.add(dado)
