@@ -59,6 +59,8 @@ class MainApp(App):
             # Fator de Potência
             'fp_total': 871,          # Fator de potência total
 
+            #comentário teste
+
             # --- VÁLVULAS (Todas no endereço 712) ---
             'XV_2': 712,
             'XV_3': 712,
