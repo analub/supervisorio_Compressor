@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, GraficoPopup, BancoDadosPopup
+from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, DataGraphPopup, BancoDadosPopup
 from timeseriesgraph import TimeSeriesGraph
 from pyModbusTCP.client import ModbusClient # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
 from kivy.core.window import Window # Permite controlar propriedades da janela, como o cursor do mouse
@@ -16,8 +16,6 @@ from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from random import uniform
 
-
-
 class MainWidget(BoxLayout):
     """
     Widget principal do aplicativo
@@ -33,11 +31,13 @@ class MainWidget(BoxLayout):
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
     _updateWidgets = True # Flag (bandeira) para controlar quando o loop de leitura deve rodar ou parar
     _tags = {}
+
     def __init__(self, **kwargs):
         """
         Construtor do widget principal.
         """
-        GRAY_COLOR = (0.5, 0.5, 0.5, 1)
+        self._max_points = 20
+        BLUE_COLOR = (0, 0, 1, 1)
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
@@ -45,10 +45,41 @@ class MainWidget(BoxLayout):
         self._comandoPopup = ComandoPopup()
         self._medidasPopup = MedidasPopup()
         self._temperaturaPopup = TemperaturaPopup()
-        self._graficoPopup = GraficoPopup()
         self._bancoDadosPopup = BancoDadosPopup()        
         self._serverIP = kwargs.get('server_ip')
         self._serverPort = kwargs.get('server_port')
+
+         # Criando as quatro instâncias separadas
+        self._graph_vel = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_torque = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_press = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_flow = DataGraphPopup(self._max_points, BLUE_COLOR)
+
+        # CONFIGURAÇÃO DE ESCALAS ESPECÍFICAS
+        
+        # 1. Velocidade (0 a 4000 RPM para dar margem aos 3600)
+        self._graph_vel.ids.graph.ymax = 4000
+        self._graph_vel.ids.graph.y_ticks_major = 500
+        self._graph_vel.ids.graph.ylabel = 'Amplitude (RPM)'  # Define a unidade aqui!
+        self._graph_vel.title = "GRÁFICO DE VELOCIDADE"
+
+        # 2. Torque (0 a 10 Nm para os valores em torno de 5)
+        self._graph_torque.ids.graph.ymax = 10
+        self._graph_torque.ids.graph.y_ticks_major = 1
+        self._graph_torque.ids.graph.ylabel = 'Amplitude (Nm)'
+        self._graph_torque.title = "GRÁFICO DE TORQUE"
+
+        # 3. Pressão PIT (0 a 10 bar para os valores em torno de 5)
+        self._graph_press.ids.graph.ymax = 10
+        self._graph_press.ids.graph.y_ticks_major = 1
+        self._graph_press.ids.graph.ylabel = 'Amplitude (bar)'
+        self._graph_press.title = "GRÁFICO DE PRESSÃO"
+
+        # 4. Vazão FIT (0 a 15 m³/h para os valores em torno de 10)
+        self._graph_flow.ids.graph.ymax = 15
+        self._graph_flow.ids.graph.y_ticks_major = 2
+        self._graph_flow.ids.graph.ylabel = 'Amplitude (m³/h)'
+        self._graph_flow.title = "GRÁFICO DE VAZÃO"
 
         # Instancia os componentes de interface e comunicação
         self._scanPopup = ScanPopup(scantime=self._scan_time)
@@ -96,11 +127,9 @@ class MainWidget(BoxLayout):
             setup = self._tag_setup.get(key, {'type': 'int', 'div': 1, 'unit': ''})
             self._tags[key] = {
                 'addr': value, 
-                'color': setup.get('color', GRAY_COLOR),
+                'color': setup.get('color', BLUE_COLOR),
                 **setup  # Isso "descompacta" todas as chaves do setup para dentro de _tags[key]
             }
-        #Apagar depois -> apenas para teste do indicador linear na interface (sem usar modbus):
-        Clock.schedule_interval(self.simular_dados, 0.5)
 
     def registers_to_float(self, registers):
         """
@@ -203,7 +232,26 @@ class MainWidget(BoxLayout):
                 # 3. Atualiza o Popup de Temperatura (temp_carcaca)
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
-        self.atualizar_indicadores() #para as escalar lineares na interface      
+
+        self.atualizar_indicadores() #para as escalar lineares na interface 
+
+        # Atualização dos Gráficos em tempo real
+        if self._meas['timestamp']:
+            # 1. Gráfico de Velocidade
+            if 'vel_motor' in self._meas['values']:
+                self._graph_vel.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vel_motor']), 0)
+            
+            # 2. Gráfico de Torque
+            if 'torque_motor' in self._meas['values']:
+                self._graph_torque.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['torque_motor']), 0)
+            
+            # 3. Gráfico de Pressão (PIT-01)
+            if 'pressao_reservatorio' in self._meas['values']:
+                self._graph_press.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['pressao_reservatorio']), 0)
+            
+            # 4. Gráfico de Vazão (FIT-03)
+            if 'vazao_valvulas' in self._meas['values']:
+                self._graph_flow.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vazao_valvulas']), 0)  
 
     def stopRefresh(self):
         """ 
@@ -247,7 +295,7 @@ class MainWidget(BoxLayout):
 ## APENAS PARA SIMULAR DADOS DE TESTE PARA ESCLA LINEAR NA INTERFACE
     def simular_dados(self, dt):
         self._meas['values']['vel_motor'] = uniform(0, 3600)
-        self._meas['values']['torque_motor'] = uniform(0, 1500)
+        self._meas['values']['torque_motor'] = uniform(0, 5)
         self._meas['values']['pressao_reservatorio'] = uniform(0, 5)
         self._meas['values']['vazao_valvulas'] = uniform(0, 10)
 
@@ -258,8 +306,3 @@ class MainWidget(BoxLayout):
 class LinearIndicator(Widget):
     value = NumericProperty(0)
     max_value = NumericProperty(1)
-
-    def fill_width(self):
-        if self.max_value == 0:
-            return 0
-        return (self.value / self.max_value) * self.width

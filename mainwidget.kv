@@ -47,20 +47,20 @@
 
             opacity: 1 if root.motor_ligado else 0
 
-        # IMAGEM CONEXÃO ========================================
+        
+        # IMAGEM CONEXÃO (Lógica de 3 estados) ==================
         Image:
             id: img_con
-            # Define a imagem baseada no status
+            # Muda o arquivo dependendo do status
             source: 'imagens/conectado.png' if root.status_conexao == 1 else 'imagens/conec_erro.png'
             
-            # Define a opacidade: 1 se for status 1 ou 2; 0 se for status 0 (inicial)
+            # OPACIDADE: 0 se status for 0 (inicial), 1 se for 1 (conectado) ou 2 (erro)
             opacity: 1 if root.status_conexao > 0 else 0
             
             allow_stretch: True
             keep_ratio: False
             size_hint: 0.26, 0.46
             pos_hint: {'x': 0.834, 'y': 0.714}
-            opacity: 0 if root.conectado else 1
 
         # INDICADORES LINEARES -> MEDIDAS PRINCIPAIS ==============
         #1) VELOCIDADE
@@ -73,7 +73,7 @@
         # #2) TORQUE
         LinearIndicator:
             id: ind_torque
-            max_value: 1500                     # Nm máximo
+            max_value: 5                     # Nm máximo
             size_hint: 0.09, 0.04               #não mudar! igual para todos 
             pos_hint: {'x': 0.190, 'y': 0.60}
 
@@ -87,7 +87,7 @@
         # #4) VAZÃO
         LinearIndicator:
             id: ind_vazao
-            max_value: 10       # m³/h
+            max_value: 10.2       # m³/h
             size_hint: 0.09, 0.04   #não mudar! igual para todos 
             pos_hint: {'x': 0.601, 'y': 0.865}
 
@@ -102,7 +102,7 @@
             background_normal: ''
             background_down: ''
             background_color: 0, 0, 0, 0          # tirar esse 1 no final pra ficar transparente
-            on_release: root._graficoPopup.open() #abre o popup do grafico 
+            on_release: root._graph_torque.open() #abre o popup do grafico 
 
         #2) Velocidade
         Button:
@@ -113,7 +113,7 @@
             background_normal: ''
             background_down: ''
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
-            on_release: root._graficoPopup.open() #abre o popup do grafico 
+            on_release: root._graph_vel.open() #abre o popup do grafico 
 
         #3) Pressão Tanque
         Button:
@@ -124,7 +124,7 @@
             background_normal: ''
             background_down: ''
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
-            on_release: root._graficoPopup.open() #abre o popup do grafico
+            on_release: root._graph_press.open() #abre o popup do grafico
 
         #4)Vazão Válvulas
         Button:
@@ -135,7 +135,7 @@
             background_normal: ''
             background_down: ''
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
-            on_release: root._graficoPopup.open() #abre o popup do grafico 
+            on_release: root._graph_flow.open() #abre o popup do grafico 
         
 
         # VÁLVULAS ==============================================
@@ -299,5 +299,5 @@
                 rgba: 0.65, 0.65, 0.65, 0.9             #mudei de azul para cinza
             Rectangle:                      # na horizontal
                 pos: root.x, root.y
-                size: root.fill_width(), root.height
+                size: (root.value / root.max_value if root.max_value > 0 else 0) * root.width, root.height
 
