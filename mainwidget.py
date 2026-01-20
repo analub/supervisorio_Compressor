@@ -250,7 +250,7 @@ class MainWidget(BoxLayout):
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
 
-   def save_data(self):
+    def save_data(self):
         """
         Salva os dados atuais lidos no Banco de Dados
         """
