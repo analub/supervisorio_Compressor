@@ -407,6 +407,45 @@ class MainWidget(BoxLayout):
         finally:
             self._lock.release()
 
+    def motor_reset(self):
+        """
+        Executa o reset conforme o tipo de partida selecionado
+            1 - Soft Starter (ATS48)
+            2 - Inversor (ATV31)
+            3 - Direta (Tesys)
+        """
+        if not self._partida_type:
+            print("Nenhuma partida selecionada para reset")
+            return
+
+        self._lock.acquire()
+
+        try:
+            if self._partida_type == 1:  # Soft Starter
+                self._modbusClient.write_single_register(
+                    self._tags['ats48']['addr'], 2
+                )
+
+            elif self._partida_type == 2:  # Inversor
+                self._modbusClient.write_single_register(
+                    self._tags['atv31']['addr'], 2
+                )
+
+            elif self._partida_type == 3:  # Direta
+                self._modbusClient.write_single_register(
+                    self._tags['tesys']['addr'], 2
+                )
+
+            else:
+                print("Tipo de partida inválido para reset")
+                return
+
+            self.motor_ligado = False       #para mudar a imagem do motor ligado na interface
+            print("Reset executado")
+
+        finally:
+            self._lock.release()
+
 
     def toggle_valvula(self, idx):
         """
