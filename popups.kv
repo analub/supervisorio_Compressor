@@ -188,7 +188,8 @@
                         text: "ATS48 SOFT-START"
                         bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("ats48")
+                        on_release: 
+                            root.trocar_tela("ats48")
                         size_hint_x: 1
 
             # SEGUNDA COLUNA: CONFIGURÇÃO DO TIPO DE PARTIDA
@@ -915,13 +916,13 @@
     BoxLayout:
         orientation: 'vertical'
         TimeSeriesGraph:
-            id: graph
+            id: graph_bd
             xlabel: 'Horário'
             ylabel: 'Medicoes'
             background_color: 0.5, 0.5, 0.5, 1
             x_ticks_minor: 1
             x_ticks_major: 5
-            y_ticks_major: 100
+            y_ticks_major: 10
             y_grid_label: True
             x_grid_label: True
             padding: 5
@@ -929,16 +930,16 @@
             y_grid: True
             xmin: 0
             ymin: 0
-            ymax: 500
+            ymax: 100
         BoxLayout:
             id: sensores
             orientation: 'horizontal'
             size_hint: (1, 0.1)
             Spinner:
                 id: dropdown
-                text: "Selecione"                   # !! nessas partes comentadas -> adicionar valores e mudança de varivael pro grafico!!
-                # values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
-                # on_text: app.root.muda_graph(self.text)
+                text: "pressao_reservatorio"  # seleciona a pressão do reservatório por padrão
+                values: ["pressao_reservatorio", "vazao_valvulas", "torque_motor", "vel_motor", "temp_carcaca", "freq_rede", "ddp_rs", "ddp_st", "ddp_tr", "corr_r", "corr_s", "corr_t", "corr_media", "corr_neutro", "pot_ativa_r", "pot_ativa_s", "pot_ativa_t", "pot_ativa_total", "pot_reativa_total", "pot_aparente_total", "dem_anterior", "dem_atual", "dem_media", "dem_prevista", "fp_total"]
+                on_text: root.plotar_grafico()
 
         BoxLayout:
             orientation: 'horizontal'

@@ -5,6 +5,10 @@ from kivy.uix.label import Label
 from kivy_garden.graph import LinePlot
 from kivy.uix.boxlayout import BoxLayout
 
+from datetime import datetime
+from db import Session
+from models import CompData
+
 # Aqui serão colocados os popups do supervisório
 
 class ModbusPopup(Popup):
@@ -51,6 +55,7 @@ class ComandoPopup(Popup):
     """
         Popup para enviar comandos de partida ao sistema
     """
+
     def trocar_tela(self, nome_tela):
         """
         Troca a subtela de configuração conforme o tipo de partida
@@ -118,8 +123,58 @@ class BancoDadosPopup(Popup):
     """
         Popup para exibir informações do banco de dados
     """
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Cria a linha do gráfico (cor amarela)
+        self.plot = LinePlot(line_width=2, color=[1, 0, 0, 1]) 
+        # Adiciona a linha ao objeto Graph definido no arquivo .kv
+        self.ids.graph_bd.add_plot(self.plot)
 
+    def plotar_grafico(self):
+        session = Session()
+        try:
+            # Obtém data e hora inicial e final de consulta
+            dt_inicial = datetime.strptime(self.ids.txt_init_time.text, '%d/%m/%Y %H:%M:%S')
+            dt_final = datetime.strptime(self.ids.txt_final_time.text, '%d/%m/%Y %H:%M:%S')
+
+            #Obtém a variável escolhida na seleção
+            variavel_selecionada = self.ids.dropdown.text
+
+            #Escolher coluna correspondente do Banco de Dados
+            coluna_banco = getattr(CompData, variavel_selecionada)
+
+            #Consulta no Banco de Dados
+            dados = session.query(CompData.timestamp, coluna_banco).filter(CompData.timestamp.between(dt_inicial, dt_final)).order_by(CompData.timestamp).all()
+            if not dados:
+                print("Nenhum dado encontrado")
+                return
+            
+            pontos = []
+            valores_y = []
+
+            for i, registro in enumerate(dados):
+                eixo_x = i
+                eixo_y = registro[1]
+                if eixo_y is not None:
+                    pontos.append((eixo_x, eixo_y))
+                    valores_y.append(eixo_y)
+
+            self.plot.points = pontos
+            if valores_y:
+                self.ids.graph_bd.xmax = len(pontos)
+                self.ids.graph_bd.xmin = 0
+                self.ids.graph_bd.ymax = max(valores_y) * 1.1 # 10% de folga em cima
+                self.ids.graph_bd.ymin = min(valores_y) * 0.9 # 10% de folga embaixo
+
+        except AttributeError:
+            print(f"Erro: A variável '{variavel_selecionada}' não existe na tabela do banco.")
+        except ValueError as e:
+            print("Erro de formato de data:", e)
+        except Exception as e:
+            print("Erro genérico:", e)
+        finally:
+            session.close()
+            
 class historicoPopup(Popup):
     """
         Popup para exibir hisotorico do banco de dados

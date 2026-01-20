@@ -10,6 +10,8 @@ import struct
 from kivy.properties import BooleanProperty
 from kivy.properties import ListProperty
 from kivy.uix.floatlayout import FloatLayout
+from db import Session
+from models import CompData
 from kivy.properties import NumericProperty
 from kivy.uix.widget import Widget
 #para testar a escala linear na interface sem o modbus
@@ -41,6 +43,9 @@ class MainWidget(BoxLayout):
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
+        self._partida_type = ''
+
+        self._session = Session() # Cria conexão com o Banco de Dados
         
         self._comandoPopup = ComandoPopup()
         self._medidasPopup = MedidasPopup()
@@ -118,7 +123,19 @@ class MainWidget(BoxLayout):
             'pot_aparente_total': {'type': 'int', 'div': 1, 'unit': ' VA'},
             'pot_ativa_r': {'type': 'int', 'div': 1, 'unit': ' W'},
             'pot_ativa_s': {'type': 'int', 'div': 1, 'unit': ' W'},
-            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'}
+            'pot_ativa_t': {'type': 'int', 'div': 1, 'unit': ' W'},
+
+            # Tags de comando
+            'tipo_motor': {'type': 'int', 'div': 1},
+            'indica_driver': {'type': 'int', 'div': 1},
+            'sel_driver': {'type': 'int', 'div': 1},
+            'tesys': {'type': 'int', 'div': 1},
+            'atv31': {'type': 'int', 'div': 1},
+            'ats48': {'type': 'int', 'div': 1},
+            'ats48_dcc': {'type': 'int', 'div': 1},
+            'ats48_acc': {'type': 'int', 'div': 1},
+            'atv31_velocidade': {'type': 'int', 'div': 10},
+            'habilita': {'type': 'bit', 'div': 1}
         }
 
         # Organiza as configurações de cada sensor (Endereço, Cor no Gráfico, Tipo, Divisor e Unidade)
@@ -176,7 +193,7 @@ class MainWidget(BoxLayout):
             while self._updateWidgets:
                 self.readData()
                 self.updateGUI()
-                # Aqui entrará a rotina de inserir os dados no Banco de Dados para histórico
+                self.save_data()
                 # Aguarda o tempo de varredura definido (convertido para segundos)
                 sleep(self._scan_time/1000)
         except Exception as e:
@@ -232,6 +249,35 @@ class MainWidget(BoxLayout):
                 # 3. Atualiza o Popup de Temperatura (temp_carcaca)
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
+
+   def save_data(self):
+        """
+        Salva os dados atuais lidos no Banco de Dados
+        """
+        try:
+            colunas_permitidas = [
+                'vazao_valvulas', 'torque_motor', 'vel_motor', 'pressao_reservatorio',
+                'temp_carcaca', 'freq_rede', 'ddp_rs', 'ddp_st', 'ddp_tr', 
+                'corr_r', 'corr_s', 'corr_t', 'corr_neutro', 'corr_media',
+                'pot_ativa_r', 'pot_ativa_s', 'pot_ativa_t', 'pot_ativa_total',
+                'pot_reativa_total', 'pot_aparente_total', 'dem_anterior', 
+                'dem_atual', 'dem_media', 'dem_prevista', 'fp_total'
+            ]
+            data_to_save = {}
+            data_to_save['timestamp'] = datetime.now()
+
+            for key, value in self._meas['values'].items():
+                if key in colunas_permitidas:
+                    data_to_save[key] = value
+            
+            dado = CompData(**data_to_save)
+            self._session.add(dado)
+            self._session.commit()
+            print("Dados salvos no histórico") #debug
+
+        except Exception as e:
+            print("Erro ao salvar no Banco de Dados", e)
+            self._session.rollback() #desfaz alterações em caso de erro
 
         self.atualizar_indicadores() #para as escalar lineares na interface 
 
