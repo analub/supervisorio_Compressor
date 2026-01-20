@@ -174,21 +174,26 @@
                         text: "TESYS DIRETA"
                         bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("tesysDireta")
+                        on_release: 
+                            app.root.selecionar_partida(3)
+                            root.trocar_tela("tesysDireta")
                         size_hint_x: 1
 
                     RoundedButton:
                         text: "ATV31 INVERSOR"
                         bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("atv31")
+                        on_release: 
+                            app.root.selecionar_partida(2)
+                            root.trocar_tela("atv31")
                         size_hint_x: 1
 
                     RoundedButton:
                         text: "ATS48 SOFT-START"
                         bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: 
+                        on_release:
+                            app.root.selecionar_partida(1)
                             root.trocar_tela("ats48")
                         size_hint_x: 1
 
