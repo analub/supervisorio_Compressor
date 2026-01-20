@@ -55,7 +55,7 @@ class MainWidget(BoxLayout):
         self._serverPort = kwargs.get('server_port')
         self._lock = Lock()  # Lock para sincronização de acesso ao Modbus
 
-         # Criando as quatro instâncias separadas
+        # Criando as quatro instâncias separadas
         self._graph_vel = DataGraphPopup(self._max_points, BLUE_COLOR)
         self._graph_torque = DataGraphPopup(self._max_points, BLUE_COLOR)
         self._graph_press = DataGraphPopup(self._max_points, BLUE_COLOR)
@@ -66,7 +66,7 @@ class MainWidget(BoxLayout):
         # 1. Velocidade (0 a 4000 RPM para dar margem aos 3600)
         self._graph_vel.ids.graph.ymax = 4000
         self._graph_vel.ids.graph.y_ticks_major = 500
-        self._graph_vel.ids.graph.ylabel = 'Amplitude (RPM)'  # Define a unidade aqui!
+        self._graph_vel.ids.graph.ylabel = 'Amplitude (RPM)'
         self._graph_vel.title = "GRÁFICO DE VELOCIDADE"
 
         # 2. Torque (0 a 10 Nm para os valores em torno de 5)
@@ -177,7 +177,7 @@ class MainWidget(BoxLayout):
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
                 
-                # 3. FECHA O POPUP AUTOMATICAMENTE
+                # 3. Fecha o popup automaticamente
                 self._modbusPopup.dismiss()
             else:
                 self.status_conexao = 2  # Falha: mostra conec_erro.png
