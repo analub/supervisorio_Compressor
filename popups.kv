@@ -137,11 +137,11 @@
     height: 500
     background_color: 0, 0, 0, 0
 
-    BoxLayout:                          #BoxLayout Pai
+    BoxLayout:                          # BoxLayout Pai
         orientation: 'vertical'
         size_hint: 1, 1
 
-        BoxLayout:                      #BoxLayout com as colunas
+        BoxLayout:                      # BoxLayout com as colunas
             orientation: 'horizontal'
             size_hint: 1, 0.8
             canvas.before:
@@ -166,45 +166,43 @@
                     halign: 'center'
                     valign: 'middle'
                     text_size: self.size
+
                 BoxLayout:
                     orientation: 'vertical'
                     spacing: 12
                     size_hint_y: 0.8
+
                     RoundedButton:
                         text: "TESYS DIRETA"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: 
+                        size_hint_x: 1
+                        on_release:
                             app.root.selecionar_partida(3)
                             root.trocar_tela("tesysDireta")
-                        size_hint_x: 1
 
                     RoundedButton:
                         text: "ATV31 INVERSOR"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: 
+                        size_hint_x: 1
+                        on_release:
                             app.root.selecionar_partida(2)
                             root.trocar_tela("atv31")
-                        size_hint_x: 1
 
                     RoundedButton:
                         text: "ATS48 SOFT-START"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
+                        size_hint_x: 1
                         on_release:
                             app.root.selecionar_partida(1)
                             root.trocar_tela("ats48")
-                        size_hint_x: 1
 
-            # SEGUNDA COLUNA: CONFIGURÇÃO DO TIPO DE PARTIDA
+            # SEGUNDA COLUNA: CONFIGURAÇÃO DO TIPO DE PARTIDA
             BoxLayout:
                 size_hint_x: 0.3
                 padding: 10
 
                 ScreenManager:
                     id: screenTipoPartida
-                    #current: "vazia"    
 
                     TesysDiretaScreen:
                         name: "tesysDireta"
@@ -216,106 +214,12 @@
                         name: "atv31"
 
                     VaziaScreen:
-                        name: "vazia"               # screen vazia enquanto não seleciona nada
+                        name: "vazia"
 
-
-            # TERCEIRA COLUNA: RELIGAMENTO
-            BoxLayout:
-                orientation: 'vertical'
-                size_hint_x: 0.30
-                padding: 15
-                spacing: 10
-
-                canvas.before:
-                    Color:
-                        rgba: 0.788, 0.780, 0.780, 1
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-
-                Label:
-                    text: "RELIGAMENTO"
-                    color: 0, 0, 0, 1
-                    halign: 'center'
-                    valign: 'middle'
-                    bold: True
-                    font_size: 18
-
-                # Modo: Manual / Automatico
-                BoxLayout:
-                    orientation: 'vertical'
-                    spacing: 5
-                    # size_hint_y: 0.3
-
-                    Label:
-                        text: "Modo:"
-                        color: 0, 0, 0, 1
-                        font_size: 18
-                        bold: True
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        Label:
-                            text: "Manual"
-                            text_size: self.size
-                            halign: 'left'
-                            valign: 'middle'
-                            color: 0, 0, 0, 1
-                        GrayCheckBox:
-                            group: "relig"
-                            active: True
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        Label:
-                            text: "Automático"
-                            text_size: self.size
-                            halign: 'left'
-                            valign: 'middle'
-                            color: 0, 0, 0, 1
-                        GrayCheckBox:
-                            group: "relig"      
-
-                BoxLayout:                          #Pressão Máxima e Minima
-                    orientation: 'vertical'
-                    spacing: 5
-                    size_hint_y: 0.7
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        spacing: 5
-                        Label:
-                            text: "Mínima (kgf/cm²)"
-                            color: 0, 0, 0, 1
-                            bold: True
-                            font_size: 18
-
-                        TextInput:
-                            text: "0.0"
-                            color: 0, 0, 0, 1
-                            multiline: False
-                            input_filter: 'float'
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        spacing: 5
-                        # size_hint_y: 0.5
-                            
-                        Label:
-                            text: "Máxima (kgf/cm²)"
-                            color: 0, 0, 0, 1
-                            bold: True
-                            font_size: 18
-
-                        TextInput:
-                            text: "5.0"
-                            color: 0, 0, 0, 1
-                            multiline: False
-                            input_filter: 'float'
-
-        # BOTÃO FECHAR 
-        BoxLayout:                    # Para ajuste do botão
+        # BOTÃO FECHAR
+        BoxLayout:
             size_hint: 1, 0.2
-            padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
+            padding: [0, 15, 0, 20]
             canvas.before:
                 Color:
                     rgba: 0.788, 0.780, 0.780, 1
@@ -323,7 +227,7 @@
                     pos: self.pos
                     size: self.size
 
-            Widget:             #espaçador
+            Widget:
 
             RoundedButton:
                 text: "Fechar"
@@ -332,7 +236,7 @@
                 pos_hint: {"center_x": 0.5}
                 on_release: root.dismiss()
 
-            Widget:             #espaçador
+            Widget:
 
 # SCREENS PARA TIPO DE PARTIDA NO MOTOR =================
 # 1) SOFT-START SCREEN
