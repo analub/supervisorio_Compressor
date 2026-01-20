@@ -10,7 +10,8 @@ import struct
 from kivy.properties import BooleanProperty
 from kivy.properties import ListProperty
 from kivy.uix.floatlayout import FloatLayout
-
+from db import Session
+from models import CompData
 
 class MainWidget(BoxLayout):
     """
@@ -35,6 +36,8 @@ class MainWidget(BoxLayout):
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
         self._partida_type = ''
+
+        self._session = Session() # Cria conexão com o Banco de Dados
         
         self._comandoPopup = ComandoPopup()
         self._medidasPopup = MedidasPopup()
@@ -149,7 +152,7 @@ class MainWidget(BoxLayout):
             while self._updateWidgets:
                 self.readData()
                 self.updateGUI()
-                # Aqui entrará a rotina de inserir os dados no Banco de Dados para histórico
+                self.save_data()
                 # Aguarda o tempo de varredura definido (convertido para segundos)
                 sleep(self._scan_time/1000)
         except Exception as e:
@@ -214,6 +217,26 @@ class MainWidget(BoxLayout):
                 print(f"[WARN] Modbus desconectado. Escrita ignorada ({address})")
         except Exception as e:
             print(f"[ERROR] Erro ao escrever registrador {address}: {e}")
+
+    def save_data(self):
+        """
+        Salva os dados atuais lidos no Banco de Dados
+        """
+        try:
+            data_to_save = {}
+            data_to_save['timestamp'] = datetime.now()
+
+            for key, value in self._meas['values'].items():
+                data_to_save[key] = value
+            
+            dado = CompData(**data_to_save)
+            self._session.add(dado)
+            self._session.commit()
+            print("Dados salvos no histórico") #debug
+
+        except Exception as e:
+            print("Erro ao salvar no Banco de Dados", e)
+            self._session.rollback() #desfaz alterações em caso de erro
 
     def set_partida_type(self, partida_type):
         self._partida_type = partida_type
