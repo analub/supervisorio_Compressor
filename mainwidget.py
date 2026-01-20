@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, GraficoPopup, BancoDadosPopup
+from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, TemperaturaPopup, DataGraphPopup, BancoDadosPopup
 from timeseriesgraph import TimeSeriesGraph
 from pyModbusTCP.client import ModbusClient # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
 from kivy.core.window import Window # Permite controlar propriedades da janela, como o cursor do mouse
@@ -12,26 +12,34 @@ from kivy.properties import ListProperty
 from kivy.uix.floatlayout import FloatLayout
 from db import Session
 from models import CompData
+from kivy.properties import NumericProperty
+from kivy.uix.widget import Widget
+#para testar a escala linear na interface sem o modbus
+from kivy.clock import Clock
+from random import uniform
 
 class MainWidget(BoxLayout):
     """
     Widget principal do aplicativo
     """
+    # 0 = Inicial (sem imagem), 1 = Conectado, 2 = Erro
+    status_conexao = NumericProperty(0)
     # Estado inicial das imagens (motor e conexão -> planta desligada)
     motor_ligado = BooleanProperty(False)
      # False = fechada | True = aberta
     valvulas = ListProperty([False, False, False, False, False])
-    conectado = BooleanProperty(False)
 
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
     _updateWidgets = True # Flag (bandeira) para controlar quando o loop de leitura deve rodar ou parar
     _tags = {}
+
     def __init__(self, **kwargs):
         """
         Construtor do widget principal.
         """
-        GRAY_COLOR = (0.5, 0.5, 0.5, 1)
+        self._max_points = 20
+        BLUE_COLOR = (0, 0, 1, 1)
         super().__init__()
         # Configurações iniciais recebidas da main.py
         self._scan_time = kwargs.get('scan_time')
@@ -42,10 +50,41 @@ class MainWidget(BoxLayout):
         self._comandoPopup = ComandoPopup()
         self._medidasPopup = MedidasPopup()
         self._temperaturaPopup = TemperaturaPopup()
-        self._graficoPopup = GraficoPopup()
         self._bancoDadosPopup = BancoDadosPopup()        
         self._serverIP = kwargs.get('server_ip')
         self._serverPort = kwargs.get('server_port')
+
+         # Criando as quatro instâncias separadas
+        self._graph_vel = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_torque = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_press = DataGraphPopup(self._max_points, BLUE_COLOR)
+        self._graph_flow = DataGraphPopup(self._max_points, BLUE_COLOR)
+
+        # CONFIGURAÇÃO DE ESCALAS ESPECÍFICAS
+        
+        # 1. Velocidade (0 a 4000 RPM para dar margem aos 3600)
+        self._graph_vel.ids.graph.ymax = 4000
+        self._graph_vel.ids.graph.y_ticks_major = 500
+        self._graph_vel.ids.graph.ylabel = 'Amplitude (RPM)'  # Define a unidade aqui!
+        self._graph_vel.title = "GRÁFICO DE VELOCIDADE"
+
+        # 2. Torque (0 a 10 Nm para os valores em torno de 5)
+        self._graph_torque.ids.graph.ymax = 10
+        self._graph_torque.ids.graph.y_ticks_major = 1
+        self._graph_torque.ids.graph.ylabel = 'Amplitude (Nm)'
+        self._graph_torque.title = "GRÁFICO DE TORQUE"
+
+        # 3. Pressão PIT (0 a 10 bar para os valores em torno de 5)
+        self._graph_press.ids.graph.ymax = 10
+        self._graph_press.ids.graph.y_ticks_major = 1
+        self._graph_press.ids.graph.ylabel = 'Amplitude (bar)'
+        self._graph_press.title = "GRÁFICO DE PRESSÃO"
+
+        # 4. Vazão FIT (0 a 15 m³/h para os valores em torno de 10)
+        self._graph_flow.ids.graph.ymax = 15
+        self._graph_flow.ids.graph.y_ticks_major = 2
+        self._graph_flow.ids.graph.ylabel = 'Amplitude (m³/h)'
+        self._graph_flow.title = "GRÁFICO DE VAZÃO"
 
         # Instancia os componentes de interface e comunicação
         self._scanPopup = ScanPopup(scantime=self._scan_time)
@@ -105,7 +144,7 @@ class MainWidget(BoxLayout):
             setup = self._tag_setup.get(key, {'type': 'int', 'div': 1, 'unit': ''})
             self._tags[key] = {
                 'addr': value, 
-                'color': setup.get('color', GRAY_COLOR),
+                'color': setup.get('color', BLUE_COLOR),
                 **setup  # Isso "descompacta" todas as chaves do setup para dentro de _tags[key]
             }
 
@@ -130,18 +169,20 @@ class MainWidget(BoxLayout):
             self._modbusClient.open()
             Window.set_system_cursor("arrow") # Volta o cursor ao normal
             if self._modbusClient.is_open:
-                # Inicia a Thread para que a interface não trave durante o loop de leitura
-                self.conectado = True  #conexao ok -> aparece imagem na tela
+                # 1. Atualiza o estado para 1 (Conectado)
+                self.status_conexao = 1 
+                
+                # 2. Inicia a thread de leitura
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
-                # Atualiza a interface indicando sucesso
-                self.ids.img_con.source = 'imgs/conectado.png'
+                
+                # 3. FECHA O POPUP AUTOMATICAMENTE
                 self._modbusPopup.dismiss()
             else:
-                self.conectado = False          #erro de conexão -> aparece imagem vermelha
+                self.status_conexao = 2  # Falha: mostra conec_erro.png
                 self._modbusPopup.setInfo("Falha na conexão com o servidor.")
         except Exception as e:
-            self.conectado = False              #erro -> imagem vermelha  
+            self.status_conexao = 2  # Erro crítico: mostra conec_erro.png
             print("Erro: ", e.args)
 
     def updater(self):
@@ -209,16 +250,7 @@ class MainWidget(BoxLayout):
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
 
-    def write_register(self, address, value):
-        try:
-            if self._modbusClient.is_open:
-                self._modbusClient.write_single_register(address, value)
-            else:
-                print(f"[WARN] Modbus desconectado. Escrita ignorada ({address})")
-        except Exception as e:
-            print(f"[ERROR] Erro ao escrever registrador {address}: {e}")
-
-    def save_data(self):
+   def save_data(self):
         """
         Salva os dados atuais lidos no Banco de Dados
         """
@@ -247,47 +279,25 @@ class MainWidget(BoxLayout):
             print("Erro ao salvar no Banco de Dados", e)
             self._session.rollback() #desfaz alterações em caso de erro
 
-    def set_partida_type(self, partida_type):
-        self._partida_type = partida_type
+        self.atualizar_indicadores() #para as escalar lineares na interface 
 
-        partidas_map = {
-            'direta': self._tags['tesys']['addr'],
-            'softstart': self._tags['ats48']['addr'],
-            'inversor': self._tags['atv31']['addr']
-        }
-        sel_driver_map = {'softstart': 1, 'inversor': 2, 'direta': 3}
-        sel_driver_addr = self._tags['sel_driver']['addr']
-        sel_value = sel_driver_map.get(partida_type, 3)
-
-        if not self._modbusClient.is_open:
-            print("[WARN] Modbus não conectado")
-            return
-
-        # Zera partidas não selecionadas
-        for key, addr in partidas_map.items():
-            if key != partida_type:
-                self._modbusClient.write_single_register(addr, 0)
-
-        # Escreve seleção
-        self._modbusClient.write_single_register(sel_driver_addr, sel_value)
-
-    def send_motor_command(self, command):
-        command_map = {'liga': 1, 'desliga': 0, 'reset': 2}
-        value = command_map.get(command)
-
-        if value is None:
-            return
-
-        addr_map = {
-            'direta': self._tags['tesys']['addr'],
-            'softstart': self._tags['ats48']['addr'],
-            'inversor': self._tags['atv31']['addr']
-        }
-
-        addr = addr_map.get(self._partida_type)
-
-        if addr and self._modbusClient.is_open:
-            self._modbusClient.write_single_register(addr, value)
+        # Atualização dos Gráficos em tempo real
+        if self._meas['timestamp']:
+            # 1. Gráfico de Velocidade
+            if 'vel_motor' in self._meas['values']:
+                self._graph_vel.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vel_motor']), 0)
+            
+            # 2. Gráfico de Torque
+            if 'torque_motor' in self._meas['values']:
+                self._graph_torque.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['torque_motor']), 0)
+            
+            # 3. Gráfico de Pressão (PIT-01)
+            if 'pressao_reservatorio' in self._meas['values']:
+                self._graph_press.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['pressao_reservatorio']), 0)
+            
+            # 4. Gráfico de Vazão (FIT-03)
+            if 'vazao_valvulas' in self._meas['values']:
+                self._graph_flow.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vazao_valvulas']), 0)  
 
     def stopRefresh(self):
         """ 
@@ -302,8 +312,46 @@ class MainWidget(BoxLayout):
         self.motor_ligado = not self.motor_ligado
 
     def toggle_valvula(self, idx):
+        """
+        Método que atualiza o estado das 5 válvulas
+        """
         
         estados = self.valvulas[:]
         estados[idx] = not estados[idx]
         self.valvulas = estados
-        
+
+    def atualizar_indicadores(self):
+        """
+        Método que atualiza o nível dos indicadores lineares
+        """
+        valores = self._meas['values']
+
+        if 'vel_motor' in valores:
+            self.ids.ind_vel.value = valores['vel_motor']
+
+        if 'torque_motor' in valores:
+            self.ids.ind_torque.value = valores['torque_motor']
+
+        if 'pressao_reservatorio' in valores:
+            self.ids.ind_press.value = valores['pressao_reservatorio']
+
+        if 'vazao_valvulas' in valores:
+            self.ids.ind_vazao.value = valores['vazao_valvulas']
+
+## APENAS PARA SIMULAR DADOS DE TESTE PARA ESCLA LINEAR NA INTERFACE
+    def simular_dados(self, dt):
+        self._meas['values']['vel_motor'] = uniform(0, 3600)
+        self._meas['values']['torque_motor'] = uniform(0, 5)
+        self._meas['values']['pressao_reservatorio'] = uniform(0, 5)
+        self._meas['values']['vazao_valvulas'] = uniform(0, 10)
+
+        self.atualizar_indicadores()
+
+    def motorOn(self):
+        pass
+
+
+# CLASSE QUE AJUDA NA IMPLEMENTAÇÃO DOS INDICADORES LINEARES
+class LinearIndicator(Widget):
+    value = NumericProperty(0)
+    max_value = NumericProperty(1)

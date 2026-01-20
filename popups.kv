@@ -11,7 +11,7 @@
 
     #BoxLayout Pai
     BoxLayout:
-        id: configModBus                        # ID fundamental para popups.py conseguir inserir a Label de erro aqui
+        id: layout                       # ID fundamental para popups.py conseguir inserir a Label de erro aqui
         orientation: 'vertical'
         padding: 15
         spacing: 10
@@ -836,7 +836,7 @@
 # ====== GRÁFICOS DAS VARIAVEIS PRINCIPAIS  ========== # 
 # Será um popup por cada variavel!!
 
-<GraficoPopup>:
+<DataGraphPopup>:
     title: "GRÁFICO"
     bold: True
     background_color: 0, 0, 0, 0
@@ -844,15 +844,14 @@
         orientation:'vertical'
         canvas.before:
             Color:
-                rgba: 0.788, 0.780, 0.780, 1
+                rgba: 0.5,0.5,0.5,0.5
             Rectangle:
                 pos: self.pos
                 size: self.size
         TimeSeriesGraph:
             id: graph
-            xlabel: 'Horario'
-            ylabel: 'Amplitude'
-            background_color: 0.788, 0.780, 0.780, 1
+            xlabel: 'Horário'
+            background_color: 0.5,0.5,0.5,1
             x_ticks_minor: 1        #subdivisões do eixo horizontal
             x_ticks_major: 5        #grid
             y_ticks_major: 5 
@@ -869,51 +868,58 @@
             size_hint:(1,0.05)
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint: (0.5,1)
+                size_hint: (0.7,1)
                 Label:
                     size_hint: (0.3,1) 
                     text:'Número de pontos do gráfico'
-                LabelCheckBoxGrafico:
+                LabelCheckBoxDataGraph:
                     id: mp20
                     on_kv_post:
                         self.ids.label.text = '20' 
                         self.ids.checkbox.group = 'cd_group' 
                         self.ids.checkbox.active = True 
-                LabelCheckBoxGrafico:
+                LabelCheckBoxDataGraph:
                     id: mp50
                     on_kv_post:
                         self.ids.label.text = '50' 
                         self.ids.checkbox.group = 'cd_group'
-                LabelCheckBoxGrafico:
+                LabelCheckBoxDataGraph:
                     id: mp100
                     on_kv_post:
                         self.ids.label.text = '100' 
                         self.ids.checkbox.group = 'cd_group'
-            RoundedButton:
-                text: 'Fechar'  
-                size_hint: (0.2,1)
-                on_release: root.dismiss() 
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.3,1)
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:
 
-<LabelCheckBoxGrafico>:
+
+<LabelCheckBoxDataGraph>:
     orientation: 'horizontal'
     size_hint: (0.1,1)
     CheckBox:
         id: checkbox
-        # on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
+        on_active: root.update_graph_points(self.active)
     Label:
         id: label
 
-
-# =================== HISTORICO ================#
+# =================== BD ================#
 <BancoDadosPopup>:
-    title: "Histórico do Banco de Dados"
+    title: "BANCO DE DADOS"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation: 'vertical'
         TimeSeriesGraph:
             id: graph_bd
-            xlabel: 'Horario'
+            xlabel: 'Horário'
             ylabel: 'Medicoes'
-            background_color: 0.788, 0.780, 0.780, 1
+            background_color: 0.5, 0.5, 0.5, 1
             x_ticks_minor: 1
             x_ticks_major: 5
             y_ticks_major: 10
@@ -958,7 +964,11 @@
                 halign: 'center'
                 valign: 'middle'
                 multiline: False
-            RoundedButton:
-                text: 'Fechar'
-                size_hint: (1, 0.8)
-                on_release: root.dismiss()
+            BoxLayout:
+                orientation: 'horizontal'
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:
