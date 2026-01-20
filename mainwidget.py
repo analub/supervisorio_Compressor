@@ -222,6 +222,19 @@ class MainWidget(BoxLayout):
 
             except Exception as e:
                 print(f"Erro na leitura da tag {key}: {e.args}")
+                
+            try:
+                # Lê o registrador de estado das válvulas
+                res = self._modbusClient.read_holding_registers(712, 1)
+                if res:
+                    # Converte o valor de volta para a lista de True/False
+                    bits = res[0]
+                    novos_estados = []
+                    for i in range(5):
+                        novos_estados.append(bool(bits & (1 << i)))
+                    self.valvulas = novos_estados
+            except:
+                pass
 
     def updateGUI(self):
         for key, tag_info in self._tags.items():
@@ -449,12 +462,29 @@ class MainWidget(BoxLayout):
 
     def toggle_valvula(self, idx):
         """
-        Método que atualiza o estado das 5 válvulas
+        Método que atualiza o estado local e envia o comando Modbus
         """
-        
+        # 1. Atualiza o estado visual na lista local
         estados = self.valvulas[:]
         estados[idx] = not estados[idx]
         self.valvulas = estados
+
+        # 2. Envia o comando para o hardware via Modbus
+        if self._modbusClient.is_open:
+            try:
+                # Converte a lista de booleanos para um bitmask (ex: [T, F, T] -> 5)
+                valor_para_escrita = 0
+                for i, estado in enumerate(self.valvulas):
+                    if estado:
+                        # Desloca o bit '1' para a posição correta da válvula
+                        valor_para_escrita |= (1 << i)
+
+                # Escreve no registrador 712 (padrão para comandos de válvula)
+                # XV_2 é o bit 0, XV_3 o bit 1, e assim por diante
+                self._modbusClient.write_single_register(712, valor_para_escrita)
+                
+            except Exception as e:
+                print(f"Erro ao enviar comando da válvula {idx}: {e.args}")
 
     def atualizar_indicadores(self):
         """
