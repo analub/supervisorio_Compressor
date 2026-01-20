@@ -108,15 +108,15 @@ class MedidasPopup(Popup):
     """
     pass
 
-class GraficoPopup(Popup):
+class DataGraphPopup(Popup):
     """
-        Popup para exibir gráficos
+    Popup para exibir gráficos
     """
-    # def __init__(self, xmax,plot_color, **kwargs):
-    #     super().__init__(**kwargs)
-    #     self.plot = LinePlot(line_width=1.5, color=plot_color) #linha que será plotada no gráfico de temperatura, o gráfico é só o fundo
-    #     self.ids.graph.add_plot(self.plot)
-    #     self.ids.graph.xmax = xmax
+    def __init__(self, xmax,plot_color, **kwargs):
+        super().__init__(**kwargs)
+        self.plot = LinePlot(line_width=1.5, color=plot_color) #linha que será plotada no gráfico de temperatura, o gráfico é só o fundo
+        self.ids.graph.add_plot(self.plot)
+        self.ids.graph.xmax = xmax
     pass
 
 class BancoDadosPopup(Popup):
@@ -183,5 +183,22 @@ class historicoPopup(Popup):
         super().__init__()
     
 
-class LabelCheckBoxGrafico(BoxLayout):
-    pass
+class LabelCheckBoxDataGraph(BoxLayout):
+    def update_graph_points(self, value):
+        """
+        Método seguro para atualizar os pontos do gráfico
+        """
+        # Só executa se o checkbox for marcado (True) e se o componente já tiver um pai
+        if value and self.parent:
+            try:
+                # Procuramos o popup que contém este gráfico subindo na hierarquia
+                p = self.parent
+                while p:
+                    if hasattr(p, 'ids') and 'graph' in p.ids:
+                        # Encontrou o gráfico! Agora define o número de pontos
+                        p.ids.graph.setMaxPoints(int(self.ids.label.text), 0)
+                        break
+                    p = p.parent
+            except Exception as e:
+                # Silencia erros de inicialização (comuns no on_kv_post)
+                pass
