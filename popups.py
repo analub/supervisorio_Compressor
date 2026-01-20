@@ -161,10 +161,10 @@ class BancoDadosPopup(Popup):
 
             self.plot.points = pontos
             if valores_y:
-                self.ids.graph_widget.xmax = len(pontos)
-                self.ids.graph_widget.xmin = 0
-                self.ids.graph_widget.ymax = max(valores_y) * 1.1 # 10% de folga em cima
-                self.ids.graph_widget.ymin = min(valores_y) * 0.9 # 10% de folga embaixo
+                self.ids.graph_bd.xmax = len(pontos)
+                self.ids.graph_bd.xmin = 0
+                self.ids.graph_bd.ymax = max(valores_y) * 1.1 # 10% de folga em cima
+                self.ids.graph_bd.ymin = min(valores_y) * 0.9 # 10% de folga embaixo
 
         except AttributeError:
             print(f"Erro: A variável '{variavel_selecionada}' não existe na tabela do banco.")
