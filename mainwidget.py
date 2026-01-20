@@ -223,6 +223,14 @@ class MainWidget(BoxLayout):
         Salva os dados atuais lidos no Banco de Dados
         """
         try:
+            colunas_permitidas = [
+                'vazao_valvulas', 'torque_motor', 'vel_motor', 'pressao_reservatorio',
+                'temp_carcaca', 'freq_rede', 'ddp_rs', 'ddp_st', 'ddp_tr', 
+                'corr_r', 'corr_s', 'corr_t', 'corr_neutro', 'corr_media',
+                'pot_ativa_r', 'pot_ativa_s', 'pot_ativa_t', 'pot_ativa_total',
+                'pot_reativa_total', 'pot_aparente_total', 'dem_anterior', 
+                'dem_atual', 'dem_media', 'dem_prevista', 'fp_total'
+            ]
             data_to_save = {}
             data_to_save['timestamp'] = datetime.now()
 

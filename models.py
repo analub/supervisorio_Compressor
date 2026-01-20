@@ -38,8 +38,3 @@ class CompData(Base):
     dem_media = Column(Float)
     dem_prevista = Column(Float)
     fp_total = Column(Float)
-    XV_2 = Column(Integer)
-    XV_3 = Column(Integer)
-    XV_4 = Column(Integer)
-    XV_5 = Column(Integer)
-    XV_6 = Column(Integer)
