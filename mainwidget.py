@@ -306,6 +306,13 @@ class MainWidget(BoxLayout):
         """
         self._updateWidgets = False
 
+    def set_vel_inversor(self, vel_hz):
+        self._modbusClient.write_single_register(
+            self._tags['atv31_velocidade']['addr'],
+            int(vel_hz * 10)
+        )
+
+
     def toggle_motor(self):
         """
         Método que muda o estado do motor. Usado para mudar a imagem da planta
@@ -340,6 +347,73 @@ class MainWidget(BoxLayout):
             self._lock.release()
 
     
+    # def motorOn(self):
+    #     """
+    #     Executa a partida conforme o tipo selecionado
+    #     """
+    #     if not self._partida_type:
+    #         print("Nenhuma partida selecionada")
+    #         return
+
+    #     self._lock.acquire()
+
+    #     try:
+    #         if self._partida_type == 1:  # Soft Starter
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['ats48']['addr'], 1
+    #             )
+
+    #         elif self._partida_type == 2:  # Inversor
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['atv31']['addr'], 1
+    #             )
+
+    #         elif self._partida_type == 3:  # Direta
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['tesys']['addr'], 1
+    #             )
+
+    #         else:
+    #             print("Tipo de partida inválido")
+    #             return
+
+    #         self.motor_ligado = True
+    #         print("Motor ligado")
+
+    #     finally:
+    #         self._lock.release()
+
+    # def motorOff(self):
+    #     """
+    #     Desliga o motor conforme a partida ativa
+    #     """
+    #     if not self._partida_type:
+    #         return
+
+    #     self._lock.acquire()
+
+    #     try:
+    #         if self._partida_type == 1:
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['ats48']['addr'], 0
+    #             )
+
+    #         elif self._partida_type == 2:
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['atv31']['addr'], 0
+    #             )
+
+    #         elif self._partida_type == 3:
+    #             self._modbusClient.write_single_register(
+    #                 self._tags['tesys']['addr'], 0
+    #             )
+
+    #         self.motor_ligado = False
+    #         print("Motor desligado")
+
+    #     finally:
+    #         self._lock.release()
+
     def motorOn(self):
         """
         Executa a partida conforme o tipo selecionado
@@ -351,17 +425,25 @@ class MainWidget(BoxLayout):
         self._lock.acquire()
 
         try:
-            if self._partida_type == 1:  # Soft Starter
+            # ---------- SOFT STARTER ----------
+            if self._partida_type == 1:
                 self._modbusClient.write_single_register(
                     self._tags['ats48']['addr'], 1
                 )
 
-            elif self._partida_type == 2:  # Inversor
+            # ---------- INVERSOR ATV31 ----------
+            elif self._partida_type == 2:
+                # ⚠️ garante que existe uma velocidade definida
+                # (caso usuário não tenha mexido no slider)
+                self.set_vel_inversor(30)  # valor padrão seguro (Hz)
+
+                # comando RUN
                 self._modbusClient.write_single_register(
                     self._tags['atv31']['addr'], 1
                 )
 
-            elif self._partida_type == 3:  # Direta
+            # ---------- DIRETA TESYS ----------
+            elif self._partida_type == 3:
                 self._modbusClient.write_single_register(
                     self._tags['tesys']['addr'], 1
                 )
@@ -386,16 +468,25 @@ class MainWidget(BoxLayout):
         self._lock.acquire()
 
         try:
+            # ---------- SOFT STARTER ----------
             if self._partida_type == 1:
                 self._modbusClient.write_single_register(
                     self._tags['ats48']['addr'], 0
                 )
 
+            # ---------- INVERSOR ATV31 ----------
             elif self._partida_type == 2:
+                # comando STOP
                 self._modbusClient.write_single_register(
                     self._tags['atv31']['addr'], 0
                 )
 
+                # opcional: zera referência
+                self._modbusClient.write_single_register(
+                    self._tags['atv31_velocidade']['addr'], 0
+                )
+
+            # ---------- DIRETA TESYS ----------
             elif self._partida_type == 3:
                 self._modbusClient.write_single_register(
                     self._tags['tesys']['addr'], 0
@@ -406,6 +497,7 @@ class MainWidget(BoxLayout):
 
         finally:
             self._lock.release()
+
 
     def motor_reset(self):
         """
@@ -477,7 +569,7 @@ class MainWidget(BoxLayout):
 ## APENAS PARA SIMULAR DADOS DE TESTE PARA ESCLA LINEAR NA INTERFACE
     def simular_dados(self, dt):
         self._meas['values']['vel_motor'] = uniform(0, 3600)
-        self._meas['values']['torque_motor'] = uniform(0, 5)
+        self._meas['values']['torque_motor'] = uniform(0, 15)
         self._meas['values']['pressao_reservatorio'] = uniform(0, 5)
         self._meas['values']['vazao_valvulas'] = uniform(0, 10)
 

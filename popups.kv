@@ -443,6 +443,8 @@
             min: 0
             max: 60
             value: 0
+            on_touch_up:
+                app.root.set_vel_inversor(self.value)
 
         Label:
             text: f"{int(vel_slider.value)} Hz"
