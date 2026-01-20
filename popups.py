@@ -5,6 +5,9 @@ from kivy.uix.label import Label
 from kivy_garden.graph import LinePlot
 from kivy.uix.boxlayout import BoxLayout
 
+from db import Session
+from models import CompData
+
 # Aqui serão colocados os popups do supervisório
 
 class ModbusPopup(Popup):
@@ -119,7 +122,12 @@ class BancoDadosPopup(Popup):
     """
         Popup para exibir informações do banco de dados
     """
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Cria a linha do gráfico (cor amarela)
+        self.plot = LinePlot(line_width=1.5, color=[1, 1, 0, 1]) 
+        # Adiciona a linha ao objeto Graph definido no arquivo .kv
+        self.ids.graph_bd.add_plot(self.plot)
 
 class historicoPopup(Popup):
     """
