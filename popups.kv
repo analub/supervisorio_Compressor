@@ -843,7 +843,7 @@
         orientation:'vertical'
         canvas.before:
             Color:
-                rgba: 0.788, 0.780, 0.780, 1
+                rgba: 0.5,0.5,0.5,0.5
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -851,7 +851,7 @@
             id: graph
             xlabel: 'Horario'
             ylabel: 'Amplitude'
-            background_color: 0.788, 0.780, 0.780, 1
+            background_color: 0.5,0.5,0.5,1
             x_ticks_minor: 1        #subdivisões do eixo horizontal
             x_ticks_major: 5        #grid
             y_ticks_major: 5 
@@ -868,7 +868,7 @@
             size_hint:(1,0.05)
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint: (0.5,1)
+                size_hint: (0.7,1)
                 Label:
                     size_hint: (0.3,1) 
                     text:'Número de pontos do gráfico'
@@ -888,10 +888,16 @@
                     on_kv_post:
                         self.ids.label.text = '100' 
                         self.ids.checkbox.group = 'cd_group'
-            RoundedButton:
-                text: 'Fechar'  
-                size_hint: (0.2,1)
-                on_release: root.dismiss() 
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.3,1)
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:
+
 
 <LabelCheckBoxGrafico>:
     orientation: 'horizontal'
@@ -903,16 +909,18 @@
         id: label
 
 
-# =================== HISTORICO ================#
+# =================== BD ================#
 <BancoDadosPopup>:
-    title: "Histórico do Banco de Dados"
+    title: "BANCO DE DADOS"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation: 'vertical'
         TimeSeriesGraph:
             id: graph
             xlabel: 'Horario'
             ylabel: 'Medicoes'
-            background_color: 0.788, 0.780, 0.780, 1
+            background_color: 0.5, 0.5, 0.5, 1
             x_ticks_minor: 1
             x_ticks_major: 5
             y_ticks_major: 100
@@ -957,7 +965,11 @@
                 halign: 'center'
                 valign: 'middle'
                 multiline: False
-            RoundedButton:
-                text: 'Fechar'
-                size_hint: (1, 0.8)
-                on_release: root.dismiss()
+            BoxLayout:
+                orientation: 'horizontal'
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:
