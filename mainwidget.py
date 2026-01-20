@@ -22,11 +22,12 @@ class MainWidget(BoxLayout):
     """
     Widget principal do aplicativo
     """
+    # 0 = Inicial (sem imagem), 1 = Conectado, 2 = Erro
+    status_conexao = NumericProperty(0)
     # Estado inicial das imagens (motor e conexão -> planta desligada)
     motor_ligado = BooleanProperty(False)
      # False = fechada | True = aberta
     valvulas = ListProperty([False, False, False, False, False])
-    conectado = BooleanProperty(False)
 
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
@@ -122,18 +123,20 @@ class MainWidget(BoxLayout):
             self._modbusClient.open()
             Window.set_system_cursor("arrow") # Volta o cursor ao normal
             if self._modbusClient.is_open:
-                # Inicia a Thread para que a interface não trave durante o loop de leitura
-                self.conectado = True  #conexao ok -> aparece imagem na tela
+                # 1. Atualiza o estado para 1 (Conectado)
+                self.status_conexao = 1 
+                
+                # 2. Inicia a thread de leitura
                 self._updateThread = Thread(target=self.updater)
                 self._updateThread.start()
-                # Atualiza a interface indicando sucesso
-                self.ids.img_con.source = 'imgs/conectado.png'
+                
+                # 3. FECHA O POPUP AUTOMATICAMENTE
                 self._modbusPopup.dismiss()
             else:
-                self.conectado = False          #erro de conexão -> aparece imagem vermelha
+                self.status_conexao = 2  # Falha: mostra conec_erro.png
                 self._modbusPopup.setInfo("Falha na conexão com o servidor.")
         except Exception as e:
-            self.conectado = False              #erro -> imagem vermelha  
+            self.status_conexao = 2  # Erro crítico: mostra conec_erro.png
             print("Erro: ", e.args)
 
     def updater(self):
