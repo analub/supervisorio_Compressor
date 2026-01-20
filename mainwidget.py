@@ -3,7 +3,7 @@ from popups import ModbusPopup, ScanPopup, ComandoPopup, MedidasPopup, Temperatu
 from timeseriesgraph import TimeSeriesGraph
 from pyModbusTCP.client import ModbusClient # Importa a classe responsável por conectar o supervisório ao servidor Modbus TCP
 from kivy.core.window import Window # Permite controlar propriedades da janela, como o cursor do mouse
-from threading import Thread # Permite rodar funções em segundo plano sem travar a interface
+from threading import Thread, Lock # Permite rodar funções em segundo plano sem travar a interface
 from time import sleep # Utilizado para criar intervalos de tempo entre as leituras
 from datetime import datetime
 import struct
@@ -53,6 +53,7 @@ class MainWidget(BoxLayout):
         self._bancoDadosPopup = BancoDadosPopup()        
         self._serverIP = kwargs.get('server_ip')
         self._serverPort = kwargs.get('server_port')
+        self._lock = Lock()  # Lock para sincronização de acesso ao Modbus
 
          # Criando as quatro instâncias separadas
         self._graph_vel = DataGraphPopup(self._max_points, BLUE_COLOR)
@@ -309,7 +310,142 @@ class MainWidget(BoxLayout):
         """
         Método que muda o estado do motor. Usado para mudar a imagem da planta
         """
-        self.motor_ligado = not self.motor_ligado
+        # self.motor_ligado = not self.motor_ligado
+        if self.motor_ligado:
+            self.motorOff()
+        else:
+            self.motorOn()
+
+    def selecionar_partida(self, tipo):
+        """
+        Método para seleiconar o tipo de partida do motor, sendo:
+            1 - Soft Starter (ATS48)
+            2 - Inversor (ATV31)
+            3 - Direta (Tesys)
+        """
+        self._lock.acquire()
+
+        try:
+            self._partida_type = tipo
+
+            # escreve no registrador de seleção (equivalente ao 1324)
+            self._modbusClient.write_single_register(
+                self._tags['sel_driver']['addr'],
+                tipo
+            )
+
+            print(f"Tipo de partida selecionado: {tipo}")
+
+        finally:
+            self._lock.release()
+
+    
+    def motorOn(self):
+        """
+        Executa a partida conforme o tipo selecionado
+        """
+        if not self._partida_type:
+            print("Nenhuma partida selecionada")
+            return
+
+        self._lock.acquire()
+
+        try:
+            if self._partida_type == 1:  # Soft Starter
+                self._modbusClient.write_single_register(
+                    self._tags['ats48']['addr'], 1
+                )
+
+            elif self._partida_type == 2:  # Inversor
+                self._modbusClient.write_single_register(
+                    self._tags['atv31']['addr'], 1
+                )
+
+            elif self._partida_type == 3:  # Direta
+                self._modbusClient.write_single_register(
+                    self._tags['tesys']['addr'], 1
+                )
+
+            else:
+                print("Tipo de partida inválido")
+                return
+
+            self.motor_ligado = True
+            print("Motor ligado")
+
+        finally:
+            self._lock.release()
+
+    def motorOff(self):
+        """
+        Desliga o motor conforme a partida ativa
+        """
+        if not self._partida_type:
+            return
+
+        self._lock.acquire()
+
+        try:
+            if self._partida_type == 1:
+                self._modbusClient.write_single_register(
+                    self._tags['ats48']['addr'], 0
+                )
+
+            elif self._partida_type == 2:
+                self._modbusClient.write_single_register(
+                    self._tags['atv31']['addr'], 0
+                )
+
+            elif self._partida_type == 3:
+                self._modbusClient.write_single_register(
+                    self._tags['tesys']['addr'], 0
+                )
+
+            self.motor_ligado = False
+            print("Motor desligado")
+
+        finally:
+            self._lock.release()
+
+    def motor_reset(self):
+        """
+        Executa o reset conforme o tipo de partida selecionado
+            1 - Soft Starter (ATS48)
+            2 - Inversor (ATV31)
+            3 - Direta (Tesys)
+        """
+        if not self._partida_type:
+            print("Nenhuma partida selecionada para reset")
+            return
+
+        self._lock.acquire()
+
+        try:
+            if self._partida_type == 1:  # Soft Starter
+                self._modbusClient.write_single_register(
+                    self._tags['ats48']['addr'], 2
+                )
+
+            elif self._partida_type == 2:  # Inversor
+                self._modbusClient.write_single_register(
+                    self._tags['atv31']['addr'], 2
+                )
+
+            elif self._partida_type == 3:  # Direta
+                self._modbusClient.write_single_register(
+                    self._tags['tesys']['addr'], 2
+                )
+
+            else:
+                print("Tipo de partida inválido para reset")
+                return
+
+            self.motor_ligado = False       #para mudar a imagem do motor ligado na interface
+            print("Reset executado")
+
+        finally:
+            self._lock.release()
+
 
     def toggle_valvula(self, idx):
         """
@@ -346,10 +482,6 @@ class MainWidget(BoxLayout):
         self._meas['values']['vazao_valvulas'] = uniform(0, 10)
 
         self.atualizar_indicadores()
-
-    def motorOn(self):
-        pass
-
 
 # CLASSE QUE AJUDA NA IMPLEMENTAÇÃO DOS INDICADORES LINEARES
 class LinearIndicator(Widget):
