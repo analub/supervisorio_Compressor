@@ -17,6 +17,8 @@
             Rectangle:
                 size: self.size
                 pos: self.pos
+
+        # IMAGEM BASE DE FUNDO ====================================
         Image:
             source: 'imagens/baseDesligada_LIMPA.png'
             allow_stretch: True
@@ -34,97 +36,273 @@
             background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
             on_release: root._modbusPopup.open()  #abre o popup de configuração modbus
 
-        ## LABELS DE DADOS ##
+        # IMAGEM MOTOR LIGADO ====================================
+        Image:
+            source: 'imagens/motor_ligado.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.059, 'y': 0.17}
+
+            opacity: 1 if root.motor_ligado else 0
+
+        
+        # IMAGEM CONEXÃO (Lógica de 3 estados) ==================
+        Image:
+            id: img_con
+            # Muda o arquivo dependendo do status
+            source: 'imagens/conectado.png' if root.status_conexao == 1 else 'imagens/conec_erro.png'
+            
+            # OPACIDADE: 0 se status for 0 (inicial), 1 se for 1 (conectado) ou 2 (erro)
+            opacity: 1 if root.status_conexao > 0 else 0
+            
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 0.26, 0.46
+            pos_hint: {'x': 0.834, 'y': 0.714}
+
+        # INDICADORES LINEARES -> MEDIDAS PRINCIPAIS ==============
+        #1) VELOCIDADE
+        LinearIndicator:
+            id: ind_vel
+            max_value: 3600                     # RPM máximo
+            size_hint: 0.09, 0.04               #não mudar! igual para todos 
+            pos_hint: {'x': 0.085, 'y': 0.60}
+
+        # #2) TORQUE
+        LinearIndicator:
+            id: ind_torque
+            max_value: 15                     # Nm máximo
+            size_hint: 0.09, 0.04               #não mudar! igual para todos 
+            pos_hint: {'x': 0.190, 'y': 0.60}
+
+        # #3) PRESSÃO
+        LinearIndicator:
+            id: ind_press
+            max_value: 5             # bar
+            size_hint: 0.09, 0.04   #não mudar! igual para todos 
+            pos_hint: {'x': 0.303, 'y': 0.79}
+
+        # #4) VAZÃO
+        LinearIndicator:
+            id: ind_vazao
+            max_value: 10.2       # m³/h
+            size_hint: 0.09, 0.04   #não mudar! igual para todos 
+            pos_hint: {'x': 0.601, 'y': 0.865}
+
+
+        # BOTÕES GRAFICO =================================
+        # 1) Torque (TRANSPARENTE)
+        Button:
+            id: bt_graf_torque
+            size_hint: 0.04, 0.06
+            # pos_hint: {'right': 0.27, 'top': 0.56}
+            pos_hint: {'x': 0.285, 'y': 0.50}           #ok!
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          # tirar esse 1 no final pra ficar transparente
+            on_release: root._graph_torque.open() #abre o popup do grafico 
+
+        #2) Velocidade
+        Button:
+            id: bt_graf_vel
+            size_hint: 0.04, 0.06
+            # pos_hint: {'right': 0.04, 'top': 0.56}
+            pos_hint: {'x': 0.042, 'y': 0.50}               #ok!
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graph_vel.open() #abre o popup do grafico 
+
+        #3) Pressão Tanque
+        Button:
+            id: bt_graf_PIT
+            size_hint: 0.04, 0.06
+            # pos_hint: {'right': 0.252, 'top': 0.77}
+            pos_hint: {'x': 0.26, 'y': 0.7}             #ok!
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graph_press.open() #abre o popup do grafico
+
+        #4)Vazão Válvulas
+        Button:
+            id: bt_graf_FIT
+            size_hint: 0.04, 0.06
+            # pos_hint: {'right': 0.68, 'top': 0.843}
+            pos_hint: {'x': 0.695, 'y': 0.78}           #ok!
+            background_normal: ''
+            background_down: ''
+            background_color: 0, 0, 0, 0          #tirar esse 1 no final pra ficar transparente
+            on_release: root._graph_flow.open() #abre o popup do grafico 
+        
+
+        # VÁLVULAS ==============================================
+        # XV_2:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            # pos_hint: {'x': 0.748, 'y': 0.455}
+            pos_hint: {'x': 0.793, 'y': 0.455}              #depois de ajustar img de base -> mudar +0.045 em x
+
+            opacity: 1 if root.valvulas[0] else 0           #ATENÇÃO: indice começa em 0 e as válvulas a partir da 2
+
+        RoundedButton:
+            id: valvula_XV1
+            text: "FECHA" if root.valvulas[0] else "ABRE"
+            pos_hint: {'x': 0.8, 'y': 0.7}              #caraca acertei o y na primeira de cagada
+            on_release: root.toggle_valvula(0)
+
+        # XV_3:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.793, 'y': 0.35}
+
+            opacity: 1 if root.valvulas[1] else 0
+
+        RoundedButton:
+            id: valvula_XV3
+            text: "FECHA" if root.valvulas[1] else "ABRE"
+            # pos_hint: {'center_x': 0.805, 'y': 0.592}
+            pos_hint: {'x': 0.8, 'y': 0.594}                        # mantem x e muda +/- 0,106
+            on_release: root.toggle_valvula(1)
+
+        # XV_4:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.793, 'y': 0.243}
+
+            opacity: 1 if root.valvulas[2] else 0
+
+        RoundedButton:
+            id: valvula_XV4
+            text: "FECHA" if root.valvulas[2] else "ABRE"
+            # pos_hint: {'center_x': 0.805, 'y': 0.486}
+            pos_hint: {'x': 0.8, 'y': 0.483}
+            on_release: root.toggle_valvula(2)
+
+        # XV_5:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.793, 'y': 0.132}
+
+            opacity: 1 if root.valvulas[3] else 0
+
+        RoundedButton:
+            id: valvula_XV5
+            text: "FECHA" if root.valvulas[3] else "ABRE"
+            # pos_hint: {'center_x': 0.805, 'y': 0.374}
+            pos_hint: {'x': 0.8, 'y': 0.378}
+            on_release: root.toggle_valvula(3)
+
+        # XV_6:
+        Image:
+            source: 'imagens/valvula_ligada.png'
+            allow_stretch: True
+            keep_ratio: False
+            
+            size_hint: 0.26, 0.46      # 500x500 / 1920x1080 -> proporções da tela!!
+            pos_hint: {'x': 0.793, 'y': 0.0235}
+
+            opacity: 1 if root.valvulas[4] else 0
+
+        RoundedButton:
+            id: valvula_XV6
+            text: "FECHA" if root.valvulas[4] else "ABRE"
+            # pos_hint: {'center_x': 0.805, 'y': 0.27}
+            pos_hint: {'x': 0.8, 'y': 0.267}
+            on_release: root.toggle_valvula(4)
+
+        ## LABELS DE DADOS ======================================
         LabelMedidas:
             id: vel_motor
             text: '--- RPM'
-            pos_hint: {'center_x': 0.08, 'center_y': 0.53}
+            # pos_hint: {'center_x': 0.08, 'center_y': 0.53}
+            pos_hint: {'x': 0.1, 'y': 0.52}                         #ok!
 
         LabelMedidas:
             id: torque_motor
             text: '--- N.m'
-            pos_hint: {'center_x': 0.183, 'center_y': 0.53}
+            # pos_hint: {'center_x': 0.183, 'center_y': 0.53}
+            pos_hint: {'x': 0.2, 'y': 0.52}                         #ok!
 
         LabelMedidas:
             id: pressao_reservatorio
             text: '--- kgf/cm²'
-            pos_hint: {'center_x': 0.297, 'center_y': 0.73}
+            # pos_hint: {'center_x': 0.297, 'center_y': 0.73}
+            pos_hint: {'x': 0.31, 'y': 0.71}
 
         LabelMedidas:
             id: vazao_valvulas
             text: '--- Nm³/min'
-            pos_hint: {'center_x': 0.61, 'center_y': 0.797}
-
-        ## LABELS DE VALVULAS ##
-        LabelValvula:
-            id: XV_2
-            pos_hint: {'center_x': 0.95, 'center_y': 0.685}
-
-        LabelValvula:
-            id: XV_3
-            pos_hint: {'center_x': 0.95, 'center_y': 0.582}
-
-        LabelValvula:
-            id: XV_4
-            pos_hint: {'center_x': 0.95, 'center_y': 0.47}
-
-        LabelValvula:
-            id: XV_5
-            pos_hint: {'center_x': 0.95, 'center_y': 0.36}
-
-        LabelValvula:
-            id: XV_6
-            pos_hint: {'center_x': 0.95, 'center_y': 0.254}
-
-        # BOTÕES VALVULAS
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.7}  #caraca acertei o y na primeira de cagada
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.592}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.486}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.374}
-        RoundedButton:
-            text: "ABRE"
-            pos_hint: {'center_x': 0.805, 'y': 0.27}     
+            pos_hint: {'center_x': 0.65, 'center_y': 0.797}
         
-        # BOTÕES INFERIORES -> OBS: conferir tamanho da fonte nos botões
+        # BOTÕES INFERIORES ====================================
         RoundedButton:
             text: "MEDIÇÕES"
-            pos_hint: {'center_x': 0.35, 'y': 0.02}
+            pos_hint: {'center_x': 0.42, 'y': 0.02}
             on_release: root._medidasPopup.open()   #abre o popup de medidas
 
         RoundedButton:
-            text: "GRÁFICOS"
-            pos_hint: {'center_x': 0.50, 'y': 0.02}
-            on_release: root._graficoPopup.open()   #abre o popup de gráficos
-
-        RoundedButton:
             text: "BD"
-            pos_hint: {'center_x': 0.65, 'y': 0.02}
+            pos_hint: {'center_x': 0.55, 'y': 0.02}
             on_release: root._bancoDadosPopup.open()   #abre o popup de banco de dados
         
         RoundedButton:
-            text: "LIGA"
-            pos_hint: {'center_x': 0.07, 'y': 0.24}
+            text: "DESLIGA" if root.motor_ligado else "LIGA"    #Texto depende do estado
+            pos_hint: {'center_x': 0.115, 'y': 0.24}
+            on_release: root.toggle_motor()                     #chama o método criado para mudar estado motor
 
         RoundedButton:
             text: "COMANDO"
-            pos_hint: {'center_x': 0.2, 'y': 0.24}
+            pos_hint: {'center_x': 0.245, 'y': 0.24}
             on_release: root._comandoPopup.open()   #abre o popup de comando de partida
 
         RoundedButton:
             text: "TEMPERATURA"
-            pos_hint: {'center_x': 0.44, 'y': 0.24}
+            pos_hint: {'center_x': 0.485, 'y': 0.24}
             on_release: root._temperaturaPopup.open()   #abre o popup de temperatura
+
+        RoundedButton:
+            text: "RESET"
+            pos_hint: {'center_x': 0.18, 'y': 0.17}
+            on_release: app.root.motor_reset()
 
         Widget:
             size_hint_y: 0.01
 
-    
-        
+# REGRA QUE AJUDA IMPLEMENTAR OS INDICADORES LINEARES 
+<LinearIndicator>:
+    size_hint: None, None
+    size_hint: 0.143, 0.046   # mesma proporção da regua
+    Image:          #fica fixa -> muda a animação depois
+        source: 'imagens/indicador_linear.png'
+        allow_stretch: True
+        keep_ratio: False
+        size: root.size
+        pos: root.pos
+
+    Widget:             #muda com as medidas -> barrinha dinamica
+        canvas:
+            Color:
+                rgba: 0.65, 0.65, 0.65, 0.9             #mudei de azul para cinza
+            Rectangle:                      # na horizontal
+                pos: root.x, root.y
+                size: (root.value / root.max_value if root.max_value > 0 else 0) * root.width, root.height
+

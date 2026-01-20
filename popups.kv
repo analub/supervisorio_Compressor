@@ -1,6 +1,6 @@
 #:kivy 2.1.0
 
-# ====== JANELA DE CONFIGURAÇÕES ==========#
+# ====== JANELA DE CONFIGURAÇÕES DE CONEXÃO ========== #
 <ModBusPopup>:
     title: "CONFIGURAÇÕES MODBUS"
     bold: True
@@ -9,8 +9,9 @@
     height: 300
     width: 400      
 
+    #BoxLayout Pai
     BoxLayout:
-        id: layout # ID fundamental para o Python (popups.py) conseguir inserir a Label de erro aqui
+        id: layout                       # ID fundamental para popups.py conseguir inserir a Label de erro aqui
         orientation: 'vertical'
         padding: 15
         spacing: 10
@@ -22,7 +23,7 @@
                 size: self.size
 
         # CAMPOS IP E PORTA
-        GridLayout:                                     #Grid para IP e Porta
+        GridLayout:                                    
             cols: 2
             rows: 2
             size_hint_y: None
@@ -53,7 +54,7 @@
                 font_size: 18
 
             TextInput:
-                id: txt_port # ID usado pelo Python para ler a porta digitada
+                id: txt_port                    # ID usado pelo Python para ler a porta digitada
                 text: "502"
                 font_size: 18
                 color: 0, 0, 0, 1
@@ -70,7 +71,7 @@
             height: 60
             spacing: 20
 
-            Widget:
+            Widget:                 #espaçador
 
             RoundedButton:
                 text: "Conectar"
@@ -89,7 +90,7 @@
                     root.dismiss() # Fecha a janela do popup
                     root.clearInfo() # Limpa a mensagem de erro ao sair
 
-            Widget:
+            Widget:             #espaçador
         
 <ScanPopup>:
     title: "Configuração ScanTime"
@@ -127,7 +128,8 @@
                 on_release: 
                     root.dismiss() #fecha a janela e volta pra raiz
 
-# JANELA DE COMANDOS DO MOTOR
+
+# ====== JANELA DE COMANDOS DO MOTOR ========== #
 <ComandoPopup>:
     title: "COMANDOS DE PARTIDA DO MOTOR"
     size_hint: None, None
@@ -135,11 +137,11 @@
     height: 500
     background_color: 0, 0, 0, 0
 
-    BoxLayout:                          #BoxLayout Pai
+    BoxLayout:                          # BoxLayout Pai
         orientation: 'vertical'
         size_hint: 1, 1
 
-        BoxLayout:
+        BoxLayout:                      # BoxLayout com as colunas
             orientation: 'horizontal'
             size_hint: 1, 0.8
             canvas.before:
@@ -164,39 +166,43 @@
                     halign: 'center'
                     valign: 'middle'
                     text_size: self.size
+
                 BoxLayout:
                     orientation: 'vertical'
                     spacing: 12
                     size_hint_y: 0.8
+
                     RoundedButton:
                         text: "TESYS DIRETA"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("tesysDireta")
                         size_hint_x: 1
+                        on_release:
+                            app.root.selecionar_partida(3)
+                            root.trocar_tela("tesysDireta")
 
                     RoundedButton:
                         text: "ATV31 INVERSOR"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("atv31")
                         size_hint_x: 1
+                        on_release:
+                            app.root.selecionar_partida(2)
+                            root.trocar_tela("atv31")
 
                     RoundedButton:
                         text: "ATS48 SOFT-START"
-                        bold: False
                         pos_hint: {"center_x": 0.5}
-                        on_release: root.trocar_tela("ats48")
                         size_hint_x: 1
+                        on_release:
+                            app.root.selecionar_partida(1)
+                            root.trocar_tela("ats48")
 
-            # SEGUNDA COLUNA: CONFIGURÇÃO DO TIPO DE PARTIDA
+            # SEGUNDA COLUNA: CONFIGURAÇÃO DO TIPO DE PARTIDA
             BoxLayout:
                 size_hint_x: 0.3
                 padding: 10
 
                 ScreenManager:
-                    id: sm
-                    #current: "vazia"    
+                    id: screenTipoPartida
 
                     TesysDiretaScreen:
                         name: "tesysDireta"
@@ -208,105 +214,12 @@
                         name: "atv31"
 
                     VaziaScreen:
-                        name: "vazia"               # screen vazia enquanto não seleciona nada
+                        name: "vazia"
 
-
-            # TERCEIRA COLUNA: RELIGAMENTO
-            BoxLayout:
-                orientation: 'vertical'
-                size_hint_x: 0.30
-                padding: 15
-                spacing: 10
-
-                canvas.before:
-                    Color:
-                        rgba: 0.788, 0.780, 0.780, 1
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-
-                Label:
-                    text: "RELIGAMENTO"
-                    color: 0, 0, 0, 1
-                    halign: 'center'
-                    valign: 'middle'
-                    bold: True
-                    font_size: 18
-
-                # Modo: Manual / Automatico
-                BoxLayout:
-                    orientation: 'vertical'
-                    spacing: 5
-                    # size_hint_y: 0.3
-
-                    Label:
-                        text: "Modo:"
-                        color: 0, 0, 0, 1
-                        font_size: 18
-                        bold: True
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        Label:
-                            text: "Manual"
-                            text_size: self.size
-                            halign: 'left'
-                            valign: 'middle'
-                            color: 0, 0, 0, 1
-                        GrayCheckBox:
-                            group: "relig"
-                            active: True
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        Label:
-                            text: "Automático"
-                            text_size: self.size
-                            halign: 'left'
-                            valign: 'middle'
-                            color: 0, 0, 0, 1
-                        GrayCheckBox:
-                            group: "relig"      
-
-                BoxLayout:                          #Pressão Máxima e Minima
-                    orientation: 'vertical'
-                    spacing: 5
-                    size_hint_y: 0.7
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        spacing: 5
-                        Label:
-                            text: "Mínima (kgf/cm²)"
-                            color: 0, 0, 0, 1
-                            bold: True
-                            font_size: 18
-
-                        TextInput:
-                            text: "0.0"
-                            color: 0, 0, 0, 1
-                            multiline: False
-                            input_filter: 'float'
-
-                    BoxLayout:
-                        orientation: 'horizontal'
-                        spacing: 5
-                        # size_hint_y: 0.5
-                            
-                        Label:
-                            text: "Máxima (kgf/cm²)"
-                            color: 0, 0, 0, 1
-                            bold: True
-                            font_size: 18
-
-                        TextInput:
-                            text: "5.0"
-                            color: 0, 0, 0, 1
-                            multiline: False
-                            input_filter: 'float'
-
-        BoxLayout:                    # Para ajuste do botão
+        # BOTÃO FECHAR
+        BoxLayout:
             size_hint: 1, 0.2
-            padding: [0, 15, 0, 20]   # esquerda, baixo, direita, topo
+            padding: [0, 15, 0, 20]
             canvas.before:
                 Color:
                     rgba: 0.788, 0.780, 0.780, 1
@@ -325,8 +238,8 @@
 
             Widget:
 
-        
-# SOFT-START SCREEN
+# SCREENS PARA TIPO DE PARTIDA NO MOTOR =================
+# 1) SOFT-START SCREEN
 <ATS48Screen@Screen>:     
     BoxLayout:
         orientation: 'vertical'
@@ -358,7 +271,7 @@
             valign: 'middle'
             font_size: 16
 
-        GridLayout:
+        GridLayout:                 #grifLayout para entrada de ACC/DCC
             cols: 2
             spacing: 10
             size_hint:1, 0.6
@@ -434,12 +347,15 @@
             min: 0
             max: 60
             value: 0
+            on_touch_up:
+                app.root.set_vel_inversor(self.value)
 
         Label:
             text: f"{int(vel_slider.value)} Hz"
             color: 0, 0, 0, 1
 
-# JANELA DE TEMPERATURA DO MOTOR
+
+# ====== JANELA DE TEMPERATURA DO MOTOR ========== #
 <TemperaturaPopup>:
     title: "TEMPERATURAS DO MOTOR"
     bold: True
@@ -462,7 +378,7 @@
 
         Widget:   # espaçador superior
 
-        # ================= TEMPERATURA CARCAÇA =================
+        # CARCAÇA 
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -478,10 +394,10 @@
                 valign: 'middle'
                 text_size: self.size
 
-            Widget:
+            Widget:         #espaçador
 
             Label:
-                id: temp_C
+                id: temp_carcaca
                 text: "-.- °C"
                 font_size: 18
                 color: 0, 0, 0, 1
@@ -497,7 +413,7 @@
             size_hint_y: None
             height: 45
 
-            Widget:
+            Widget:   #espaçador
 
             RoundedButton:
                 text: "Fechar"
@@ -508,19 +424,19 @@
 
             Widget:
 
-        Widget:   # espaçador inferior
+        Widget:   # espaçador 
 
 
-# JANELA DE MEDIDAS DO MOTOR
+# ====== JANELA DE MEDIDAS ========== #
 <MedidasPopup>:
     title: "MEDIDAS ELÉTRICAS"
     bold: True
     background_color: 0, 0, 0, 0
     size_hint: None, None
     width: 650
-    height: 550
+    height: 600
 
-    BoxLayout:
+    BoxLayout:                          #BoxLayou Pai
         orientation: 'vertical'
         padding: 10
         spacing: 10
@@ -532,13 +448,13 @@
                 pos: self.pos
                 size: self.size
 
-        # ================= GRID PRINCIPAL =================
+        # GRID PRINCIPAL =================
         GridLayout:
             cols: 2
             rows: 2
             spacing: 3
 
-            # ================= TENSÃO =================
+            # TENSÃO 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -566,21 +482,21 @@
                         text: "R–S"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_rn
+                        id: ddp_rs
 
                     Label:
                         text: "S–T"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_sn
+                        id: ddp_st
 
                     Label:
                         text: "T–R"
                         color: 0, 0, 0, 1
                     LabelTHD:
-                        id: thd_tensao_tn
+                        id: ddp_tr
 
-            # ================= CORRENTE =================
+            # CORRENTE 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -608,33 +524,33 @@
                         text: "Fase R"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_r
+                        id: corr_r
 
                     Label:
                         text: "Fase S"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_s
+                        id: corr_s
 
                     Label:
                         text: "Fase T"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_t
+                        id: corr_t
 
                     Label:
                         text: "Neutro"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_n
+                        id: corr_neutro
 
                     Label:
                         text: "Média"
                         color: 0, 0, 0, 1
                     LabelValorCorrente:
-                        id: corrente_media
+                        id: corr_media
 
-            # ================= DEMANDA =================
+            # DEMANDA
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -662,27 +578,27 @@
                         text: "Anterior"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_anterior
+                        id: dem_anterior
 
                     Label:
                         text: "Atual"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_atual
+                        id: dem_atual
 
                     Label:
                         text: "Média"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_media
+                        id: dem_media
 
                     Label:
                         text: "Prevista"
                         color: 0, 0, 0, 1
                     LabelValorDemanda:
-                        id: demanda_prevista
+                        id: dem_prevista
 
-            # ================= POTÊNCIA =================
+            # POTÊNCIA 
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 5
@@ -701,7 +617,7 @@
                             points: self.x, self.y, self.right, self.y
                             width: 1.2
 
-                GridLayout:
+                GridLayout:                 #grid para colocar potencia ativa, reativa e FP
                     cols: 2
                     spacing: 10
 
@@ -727,26 +643,27 @@
                             cols: 2
                             row_default_height: 30
                             row_force_default: True
+                            id: pot_ativa
 
                             Label:
                                 text: "R"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_r
+                                id: pot_ativa_r
 
                             Label:
                                 text: "S"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_s
+                                id: pot_ativa_s
 
                             Label:
                                 text: "T"
                                 color: 0, 0, 0, 1
                             LabelValorPotAtiva:
-                                id: ativa_t
+                                id: pot_ativa_t
 
-                    # -------- OUTRAS --------
+                    # -------- Reativa, Aparente e FP --------
                     BoxLayout:
                         orientation: 'vertical'
                         spacing: 5
@@ -756,7 +673,7 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: reativa_total
+                            id: pot_reativa_total
                             text: "-.- var"
                             color: 0, 0, 0, 1
 
@@ -765,7 +682,7 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: aparente_total
+                            id: pot_aparente_total
                             text: "-.- VA"
                             color: 0, 0, 0, 1
 
@@ -774,11 +691,43 @@
                             bold: True
                             color: 0, 0, 0, 1
                         Label:
-                            id: fator_potencia
+                            id: fp_total
                             text: "-.-"
                             color: 0, 0, 0, 1
+        # Frequencia   
+        # BoxLayout:
+        #     size_hint_y: None
+        #     height: 30 
+        #     Label:
+        #         text: "Frequência"
+        #         color: 0, 0, 0, 1
+        #     Label:
+        #         id: freq_rede
+        #         text: "-.- Hz"
+        #         color: 0, 0, 0, 1
 
-        # ================= BOTÃO FECHAR =================
+        # Frequência
+        GridLayout:
+            cols: 2
+            size_hint_y: None
+            height: 30
+            spacing: 30
+
+            Label:
+                text: "Frequência"
+                bold: True
+                color: 0, 0, 0, 1
+                halign: 'right'
+                text_size: self.size
+
+            Label:
+                id: freq_rede
+                text: "-.- Hz"
+                color: 0, 0, 0, 1
+                halign: 'left'
+                text_size: self.size
+
+        # BOTÃO FECHAR 
         BoxLayout:
             size_hint_y: None
             height: 60
@@ -795,16 +744,25 @@
             Widget:
 
 
-# JANELA DOS GRÁFICOS DO MOTOR
-<GraficoPopup>:
-    title: "Gráfico"
+# ====== GRÁFICOS DAS VARIAVEIS PRINCIPAIS  ========== # 
+# Será um popup por cada variavel!!
+
+<DataGraphPopup>:
+    title: "GRÁFICO"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation:'vertical'
+        canvas.before:
+            Color:
+                rgba: 0.5,0.5,0.5,0.5
+            Rectangle:
+                pos: self.pos
+                size: self.size
         TimeSeriesGraph:
             id: graph
-            xlabel: 'Horario'
-            ylabel: 'Amplitude'
-            background_color: 0.5,0.5,0.5,0.5
+            xlabel: 'Horário'
+            background_color: 0.5,0.5,0.5,1
             x_ticks_minor: 1        #subdivisões do eixo horizontal
             x_ticks_major: 5        #grid
             y_ticks_major: 5 
@@ -821,54 +779,61 @@
             size_hint:(1,0.05)
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint: (0.5,1)
+                size_hint: (0.7,1)
                 Label:
                     size_hint: (0.3,1) 
                     text:'Número de pontos do gráfico'
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxDataGraph:
                     id: mp20
                     on_kv_post:
                         self.ids.label.text = '20' 
                         self.ids.checkbox.group = 'cd_group' 
                         self.ids.checkbox.active = True 
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxDataGraph:
                     id: mp50
                     on_kv_post:
                         self.ids.label.text = '50' 
                         self.ids.checkbox.group = 'cd_group'
-                LabeledCheckBoxDataGraph:
+                LabelCheckBoxDataGraph:
                     id: mp100
                     on_kv_post:
                         self.ids.label.text = '100' 
                         self.ids.checkbox.group = 'cd_group'
-            Button:
-                text: 'Fechar'  
-                size_hint: (0.2,1)
-                on_release: root.dismiss() 
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.3,1)
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:
 
-<LabeledCheckBoxDataGraph>:
+
+<LabelCheckBoxDataGraph>:
     orientation: 'horizontal'
     size_hint: (0.1,1)
     CheckBox:
         id: checkbox
-        on_active: app.root._graph_press.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None #ajusta numero maximo de pontos com as variaveis mp e num de plots, está em 0 porque é só um
+        on_active: root.update_graph_points(self.active)
     Label:
-        id: label 
+        id: label
 
-
-# =================== HISTORICO ================#
+# =================== BD ================#
 <BancoDadosPopup>:
-    title: "Histórico do Banco de Dados"
+    title: "BANCO DE DADOS"
+    bold: True
+    background_color: 0, 0, 0, 0
     BoxLayout:
         orientation: 'vertical'
         TimeSeriesGraph:
-            id: graph
-            xlabel: 'Horario'
+            id: graph_bd
+            xlabel: 'Horário'
             ylabel: 'Medicoes'
-            background_color: 0.5, 0.5, 0.5, 0.5
+            background_color: 0.5, 0.5, 0.5, 1
             x_ticks_minor: 1
             x_ticks_major: 5
-            y_ticks_major: 100
+            y_ticks_major: 10
             y_grid_label: True
             x_grid_label: True
             padding: 5
@@ -876,16 +841,16 @@
             y_grid: True
             xmin: 0
             ymin: 0
-            ymax: 500
+            ymax: 100
         BoxLayout:
             id: sensores
             orientation: 'horizontal'
             size_hint: (1, 0.1)
             Spinner:
                 id: dropdown
-                text: "Selecione"
-                values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
-                on_text: app.root.muda_graph(self.text)
+                text: "pressao_reservatorio"  # seleciona a pressão do reservatório por padrão
+                values: ["pressao_reservatorio", "vazao_valvulas", "torque_motor", "vel_motor", "temp_carcaca", "freq_rede", "ddp_rs", "ddp_st", "ddp_tr", "corr_r", "corr_s", "corr_t", "corr_media", "corr_neutro", "pot_ativa_r", "pot_ativa_s", "pot_ativa_t", "pot_ativa_total", "pot_reativa_total", "pot_aparente_total", "dem_anterior", "dem_atual", "dem_media", "dem_prevista", "fp_total"]
+                on_text: root.plotar_grafico()
 
         BoxLayout:
             orientation: 'horizontal'
@@ -910,20 +875,11 @@
                 halign: 'center'
                 valign: 'middle'
                 multiline: False
-            Button:
-                text: 'Fechar'
-                size_hint: (1, 0.8)
-                on_release: root.dismiss()
-
-<LabeledCheckBoxHistGraph>:
-    orientation: 'vertical'
-    size_hint: (0.2, 1)
-    BoxLayout:
-        orientation: 'vertical'
-        size_hint: (0.2, 1)
-        Spinner:
-            id: dropdown
-            text: "Selecione"
-            values: ["txt_press", "txt_tor", "txt_rot", "txt_vaz", "txt_porcen_res", "temp_r", "temp_s", "temp_t", "temp_carc", "thd_tensao_rn", "thd_tensao_sn", "thd_tensao_tn", "thd_tensao_rs", "thd_tensao_st", "thd_tensao_tr", "corrente_r", "corrente_s", "corrente_t", "corrente_n", "corrente_media", "ativa_r", "ativa_s", "ativa_t", "ativa_total", "reativa_r", "reativa_s", "reativa_t", "reativa_total", "thd_corrente_r", "thd_corrente_s", "thd_corrente_t", "thd_corrente_n"]
-            on_text: app.root.muda_graph(self.text)
-
+            BoxLayout:
+                orientation: 'horizontal'
+                Widget:
+                RoundedButton:
+                    text: 'Fechar'
+                    size_hint: (1, 0.8)
+                    on_release: root.dismiss()
+                Widget:

@@ -1,6 +1,7 @@
 from kivy.app import App
 from mainwidget import MainWidget
 from kivy.lang.builder import Builder
+from db import create_database
 
 # Carregamento dos arquivos de interface gráfica (.kv)
 Builder.load_file("mainwidget.kv")
@@ -15,6 +16,7 @@ class MainApp(App):
         """
         Método que gera o aplicativo com base no widget principal.
         """
+        create_database()
         # Passamos o IP e a Porta do servidor como argumentos.
         # Isso permite que o MainWidget já inicie configurado para o localhost (127.0.0.1).
         self._widget = MainWidget(scan_time=1000, server_ip='10.15.30.182', server_port=502, modbus_addrs = {
@@ -64,7 +66,20 @@ class MainApp(App):
             'XV_3': 712,
             'XV_4': 712,
             'XV_5': 712,
-            'XV_6': 712
+            'XV_6': 712,
+
+            # --- TAGS DE COMANDO --- 
+            'tipo_motor': 708,
+            'indica_driver': 1216,
+            'sel_driver': 1324,
+            'tesys': 1319,
+            'atv31': 1312,
+            'ats48': 1316,
+            'ats48_dcc': 1318,
+            'ats48_acc': 1317,
+            'atv31_velocidade': 1313,
+            'habilita': 1328
+
         })
         return self._widget
     
