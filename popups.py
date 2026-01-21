@@ -66,9 +66,7 @@ class ComandoPopup(Popup):
         self.ids.screenTipoPartida.current = "vazia"
 
 
-# =====================================
-# SCREENS DO COMANDO DE PARTIDA
-# =====================================
+# SCREENS DO COMANDO DE PARTIDA =======================
 
 class VaziaScreen(Screen):
     """

@@ -378,9 +378,9 @@ class MainWidget(BoxLayout):
 
             # ---------- INVERSOR ATV31 ----------
             elif self._partida_type == 2:
-                # ⚠️ garante que existe uma velocidade definida
+                # garante que existe uma velocidade definida
                 # (caso usuário não tenha mexido no slider)
-                self.set_vel_inversor(30)  # valor padrão seguro (Hz)
+                self.set_vel_inversor(30)  # valor padrão de inicio
 
                 # comando RUN
                 self._modbusClient.write_single_register(
