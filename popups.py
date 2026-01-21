@@ -151,20 +151,24 @@ class BancoDadosPopup(Popup):
             
             pontos = []
             valores_y = []
+            timestamps_str = []
 
             for i, registro in enumerate(dados):
-                eixo_x = i
+                ts = registro[0]
                 eixo_y = registro[1]
                 if eixo_y is not None:
-                    pontos.append((eixo_x, eixo_y))
+                    pontos.append((i, eixo_y))
                     valores_y.append(eixo_y)
+                    timestamps_str.append(ts.strftime('%d/%m %H:%M'))
 
             self.plot.points = pontos
             if valores_y:
-                self.ids.graph_bd.xmax = len(pontos)
-                self.ids.graph_bd.xmin = 0
-                self.ids.graph_bd.ymax = max(valores_y) * 1.1 # 10% de folga em cima
-                self.ids.graph_bd.ymin = min(valores_y) * 0.9 # 10% de folga embaixo
+                graph = self.ids.graph_bd
+                graph.xmax = len(pontos) - 1 if len(pontos) > 1 else 1
+                graph.xmin = 0
+                graph.ymax = max(valores_y) * 1.1 # 10% de folga em cima
+                graph.ymin = min(valores_y) * 0.9 # 10% de folga embaixo
+                graph.update_x_labels(timestamps=timestamps_str)
 
         except AttributeError:
             print(f"Erro: A variável '{variavel_selecionada}' não existe na tabela do banco.")
