@@ -263,6 +263,26 @@ class MainWidget(BoxLayout):
                 # 3. Atualiza o Popup de Temperatura (temp_carcaca)
                 if hasattr(self, '_temperaturaPopup') and key in self._temperaturaPopup.ids:
                     self._temperaturaPopup.ids[key].text = txt
+    
+        self.atualizar_indicadores() #para as escalar lineares na interface 
+
+        # Atualização dos Gráficos em tempo real
+        if self._meas['timestamp']:
+            # 1. Gráfico de Velocidade
+            if 'vel_motor' in self._meas['values']:
+                self._graph_vel.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vel_motor']), 0)
+            
+            # 2. Gráfico de Torque
+            if 'torque_motor' in self._meas['values']:
+                self._graph_torque.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['torque_motor']), 0)
+            
+            # 3. Gráfico de Pressão (PIT-01)
+            if 'pressao_reservatorio' in self._meas['values']:
+                self._graph_press.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['pressao_reservatorio']), 0)
+            
+            # 4. Gráfico de Vazão (FIT-03)
+            if 'vazao_valvulas' in self._meas['values']:
+                self._graph_flow.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vazao_valvulas']), 0)  
 
     def save_data(self):
         """
@@ -292,26 +312,6 @@ class MainWidget(BoxLayout):
         except Exception as e:
             print("Erro ao salvar no Banco de Dados", e)
             self._session.rollback() #desfaz alterações em caso de erro
-
-        self.atualizar_indicadores() #para as escalar lineares na interface 
-
-        # Atualização dos Gráficos em tempo real
-        if self._meas['timestamp']:
-            # 1. Gráfico de Velocidade
-            if 'vel_motor' in self._meas['values']:
-                self._graph_vel.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vel_motor']), 0)
-            
-            # 2. Gráfico de Torque
-            if 'torque_motor' in self._meas['values']:
-                self._graph_torque.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['torque_motor']), 0)
-            
-            # 3. Gráfico de Pressão (PIT-01)
-            if 'pressao_reservatorio' in self._meas['values']:
-                self._graph_press.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['pressao_reservatorio']), 0)
-            
-            # 4. Gráfico de Vazão (FIT-03)
-            if 'vazao_valvulas' in self._meas['values']:
-                self._graph_flow.ids.graph.updateGraph((self._meas['timestamp'], self._meas['values']['vazao_valvulas']), 0)  
 
     def stopRefresh(self):
         """ 
