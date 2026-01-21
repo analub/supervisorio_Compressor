@@ -27,7 +27,7 @@ class MainWidget(BoxLayout):
     # Estado inicial das imagens (motor e conexão -> planta desligada)
     motor_ligado = BooleanProperty(False)
      # False = fechada | True = aberta
-    valvulas = ListProperty([False, False, False, False, False])
+    valvulas = ListProperty([False, False, False, False, False, False])
 
     # Atributos para controle da thread de atualização de dados
     _updateThread = None # Armazena o objeto da Thread que fará a leitura constante
@@ -229,10 +229,7 @@ class MainWidget(BoxLayout):
                 if res:
                     # Converte o valor de volta para a lista de True/False
                     bits = res[0]
-                    novos_estados = []
-                    for i in range(5):
-                        novos_estados.append(bool(bits & (1 << i)))
-                    self.valvulas = novos_estados
+                    self.valvulas = [bool(bits & (1 << (i + 1))) for i in range(6)]
             except:
                 pass
 
@@ -493,18 +490,15 @@ class MainWidget(BoxLayout):
         estados[idx] = not estados[idx]
         self.valvulas = estados
 
+        valor_para_escrita = 0
+
+        for i in range(6):
+            if self.valvulas[i] == True:
+                valor_para_escrita |= (1 << (i + 1))
+
         # 2. Envia o comando para o hardware via Modbus
         if self._modbusClient.is_open:
             try:
-                # Converte a lista de booleanos para um bitmask (ex: [T, F, T] -> 5)
-                valor_para_escrita = 0
-                for i, estado in enumerate(self.valvulas):
-                    if estado:
-                        # Desloca o bit '1' para a posição correta da válvula
-                        valor_para_escrita |= (1 << i)
-
-                # Escreve no registrador 712 (padrão para comandos de válvula)
-                # XV_2 é o bit 0, XV_3 o bit 1, e assim por diante
                 self._modbusClient.write_single_register(712, valor_para_escrita)
                 
             except Exception as e:
